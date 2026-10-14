@@ -1,0 +1,3645 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MANGALURU DASARA 2026 · ಮಂಗಳೂರು ದಸರಾ ೨೦೨೬ | Sri Gokarnanatha Kshetra, Kudroli</title>
+  <style>
+    :root {
+      --gold: #f6c453;
+      --gold-bright: #ffe17d;
+      --amber: #ff8c24;
+      --crimson: #8b1e24;
+      --deep-bg: rgba(12, 8, 20, 0.84);
+      --panel-bg: rgba(18, 13, 30, 0.90);
+      --border-gold: rgba(246, 196, 83, 0.38);
+      --text-main: #fff9eb;
+      --text-muted: #d6c8b2;
+      --cyan-glow: #38bdf8;
+      --green-accent: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #06040b;
+      color: var(--text-main);
+      font-family: 'Segoe UI', 'Noto Sans Kannada', system-ui, -apple-system, sans-serif;
+    }
+
+    #webgl-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Projected 3D Labels & Hotspots Layer */
+    #overlay-3d {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .hotspot-pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      pointer-events: auto;
+      background: linear-gradient(135deg, rgba(25, 16, 40, 0.92), rgba(75, 22, 35, 0.92));
+      border: 1.5px solid var(--gold);
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.65), 0 0 12px rgba(246, 196, 83, 0.35);
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .hotspot-pin:hover {
+      transform: translate(-50%, -108%) scale(1.07);
+      background: linear-gradient(135deg, rgba(139, 30, 36, 0.96), rgba(180, 95, 20, 0.96));
+      border-color: #fff;
+    }
+
+    .hotspot-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      box-shadow: 0 0 8px var(--gold-bright);
+      animation: pulseDot 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.45); opacity: 1; }
+    }
+
+    #kiran-badge {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      background: rgba(14, 10, 24, 0.88);
+      border: 1px solid var(--gold);
+      color: var(--gold-bright);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    /* Welcome / Loading Screen */
+    #welcome-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: radial-gradient(circle at center, rgba(45, 20, 40, 0.86) 0%, rgba(7, 5, 14, 0.97) 100%);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+    }
+
+    #welcome-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .welcome-card {
+      max-width: 680px;
+      width: 100%;
+      background: linear-gradient(160deg, rgba(26, 17, 42, 0.95), rgba(14, 9, 24, 0.98));
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 30px 32px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(246, 196, 83, 0.22);
+    }
+
+    .welcome-kicker {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800;
+      color: var(--gold-bright);
+      text-shadow: 0 2px 18px rgba(255, 180, 40, 0.45);
+      margin-bottom: 6px;
+    }
+
+    .welcome-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .lang-selector-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lang-choice-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid var(--border-gold);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lang-choice-btn.active {
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: #1a0d00;
+      border-color: #fff;
+      box-shadow: 0 0 18px rgba(246, 196, 83, 0.55);
+    }
+
+    .welcome-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 22px;
+    }
+
+    .highlight-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(246, 196, 83, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .highlight-chip strong {
+      color: var(--gold-bright);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .start-tour-btn {
+      background: linear-gradient(135deg, #ffd452, #ff7b1c);
+      color: #1a0b00;
+      border: none;
+      padding: 14px 34px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(255, 140, 36, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .start-tour-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 32px rgba(255, 165, 50, 0.7);
+    }
+
+    .verify-notice {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #facc15;
+      opacity: 0.92;
+    }
+
+    /* Top Header HUD */
+    #top-hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 16px;
+      background: linear-gradient(180deg, rgba(8, 5, 15, 0.92) 0%, rgba(8, 5, 15, 0.65) 78%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hud-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-emblem {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-bright), var(--amber));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #250b00;
+      font-weight: 900;
+      box-shadow: 0 0 14px rgba(246, 196, 83, 0.6);
+    }
+
+    .brand-titles h1 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      letter-spacing: 0.3px;
+    }
+
+    .brand-titles p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .hud-btn {
+      background: var(--deep-bg);
+      border: 1px solid var(--border-gold);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.18s ease;
+    }
+
+    .hud-btn:hover {
+      border-color: var(--gold-bright);
+      background: rgba(50, 32, 74, 0.9);
+    }
+
+    .hud-btn.active {
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: #1d0c00;
+      border-color: #fff;
+      font-weight: 700;
+    }
+
+    /* Stop Pills Bar */
+    .stop-pills-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      pointer-events: auto;
+      scrollbar-width: thin;
+    }
+
+    .stop-pill {
+      background: rgba(16, 11, 28, 0.85);
+      border: 1px solid rgba(246, 196, 83, 0.28);
+      color: var(--text-muted);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .stop-pill:hover {
+      color: #fff;
+      border-color: var(--gold);
+    }
+
+    .stop-pill.active {
+      background: linear-gradient(135deg, #8b1e24, #d97706);
+      color: #fff;
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 12px rgba(246, 196, 83, 0.45);
+    }
+
+    /* Contextual Sub-bars (Stop 4 Alankara, Stop 5 Navadurga, Stop 9 Procession) */
+    #contextual-bar {
+      position: fixed;
+      top: 98px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 19;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      max-width: 95vw;
+      pointer-events: none;
+    }
+
+    .context-panel {
+      pointer-events: auto;
+      background: var(--panel-bg);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .context-panel.visible {
+      display: flex;
+    }
+
+    .context-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      margin-right: 4px;
+    }
+
+    .swatch-btn, .deity-chip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .swatch-btn.active, .deity-chip.active {
+      border-color: var(--gold-bright);
+      background: rgba(246, 196, 83, 0.25);
+      box-shadow: 0 0 10px rgba(246, 196, 83, 0.45);
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      display: inline-block;
+    }
+
+    /* Right-hand Compact Inspector Drawer (Auto-closes after 8.5s) */
+    #inspector-drawer {
+      position: fixed;
+      top: 108px;
+      right: 16px;
+      width: 330px;
+      max-width: calc(100vw - 32px);
+      z-index: 22;
+      background: var(--panel-bg);
+      border: 1.5px solid var(--gold);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #inspector-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .drawer-tag {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .drawer-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      margin-top: 2px;
+    }
+
+    .drawer-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .drawer-body {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .drawer-meta {
+      background: rgba(255, 255, 255, 0.04);
+      border-left: 3px solid var(--gold);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .drawer-timer-bar {
+      height: 3px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .drawer-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--amber));
+      transform-origin: left center;
+    }
+
+    /* Bottom Subtitle & Tour Controls Dock */
+    #bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      padding: 12px 18px 14px;
+      background: linear-gradient(0deg, rgba(7, 5, 14, 0.95) 0%, rgba(7, 5, 14, 0.78) 75%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    #tts-notice {
+      font-size: 11.5px;
+      color: #fde047;
+      background: rgba(113, 63, 18, 0.75);
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      padding: 3px 12px;
+      border-radius: 999px;
+      display: none;
+      pointer-events: auto;
+    }
+
+    .narration-box {
+      max-width: 880px;
+      width: 100%;
+      background: rgba(16, 11, 29, 0.90);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 12px 18px;
+      pointer-events: auto;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+    }
+
+    .narration-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .guide-speaking-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .voice-wave {
+      display: inline-flex;
+      gap: 2px;
+      align-items: center;
+      height: 12px;
+    }
+
+    .voice-wave span {
+      width: 3px;
+      height: 4px;
+      background: var(--gold-bright);
+      border-radius: 2px;
+      transition: height 0.15s ease;
+    }
+
+    .voice-wave.speaking span:nth-child(1) { animation: waveBar 0.5s infinite ease-in-out 0s; }
+    .voice-wave.speaking span:nth-child(2) { animation: waveBar 0.5s infinite ease-in-out 0.15s; }
+    .voice-wave.speaking span:nth-child(3) { animation: waveBar 0.5s infinite ease-in-out 0.3s; }
+
+    @keyframes waveBar {
+      0%, 100% { height: 4px; }
+      50% { height: 12px; }
+    }
+
+    #subtitle-text {
+      font-size: clamp(13.5px, 1.8vw, 15.5px);
+      line-height: 1.55;
+      color: #fff;
+      min-height: 42px;
+    }
+
+    .dock-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 880px;
+      width: 100%;
+      gap: 10px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+    }
+
+    .transport-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .Mandatory-footer-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Modals (Visitor Tips, Quiz, Transcript, Audio/GFX) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(5, 3, 10, 0.82);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-window {
+      max-width: 780px;
+      width: 100%;
+      max-height: 86vh;
+      background: linear-gradient(165deg, rgba(24, 16, 38, 0.98), rgba(12, 8, 22, 0.99));
+      border: 1.5px solid var(--gold);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border-gold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      color: var(--gold-bright);
+    }
+
+    .modal-body {
+      padding: 20px 22px;
+      overflow-y: auto;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .tip-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .tip-card h4 {
+      color: var(--gold-bright);
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-q {
+      font-weight: 700;
+      color: var(--gold-bright);
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quiz-opt {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s ease;
+    }
+
+    .quiz-opt:hover {
+      border-color: var(--gold);
+    }
+
+    .quiz-opt.correct {
+      background: rgba(34, 197, 94, 0.28);
+      border-color: #22c55e;
+    }
+
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: #ef4444;
+    }
+
+    .mixer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+    }
+
+    .mixer-row input[type="range"] {
+      width: 180px;
+      accent-color: var(--gold);
+    }
+
+    .route-banner {
+      font-size: 12px;
+      color: #fef08a;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px dashed rgba(246, 196, 83, 0.5);
+    }
+  </style>
+
+  <!-- Three.js v0.160.0 ES Module Import Map -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="webgl-container"></div>
+
+  <!-- 3D Projected Hotspots & Guide Badge -->
+  <div id="overlay-3d">
+    <div id="kiran-badge">Kiran · ಮಂಗಳೂರು ಮಾರ್ಗದರ್ಶಿ</div>
+    <div id="hotspots-layer"></div>
+  </div>
+
+  <!-- Welcome / Language Choice Overlay -->
+  <div id="welcome-overlay">
+    <div class="welcome-card">
+      <div class="welcome-kicker">SRI GOKARNANATHA KSHETRA · KUDROLI · MANGALURU</div>
+      <h1 class="welcome-title">ಮಂಗಳೂರು ದಸರಾ ೨೦೨೬ · MANGALURU DASARA 2026</h1>
+      <p class="welcome-sub" id="welcome-desc">
+        ಕುಡ್ಲದ ಜನತೆಯ ನಾಡಹಬ್ಬ — ಶ್ರೀ ಗೋಕರ್ಣನಾಥ ಕ್ಷೇತ್ರ ಕುಡ್ರೋಳಿಯ ಭವ್ಯ 3D ವರ್ಚುವಲ್ ಪ್ರವಾಸಕ್ಕೆ ಸ್ವಾಗತ.
+        Experience "The Common Man's Dasara" in interactive 3D WebGL with your local guide, Kiran.
+      </p>
+
+      <div class="lang-selector-row">
+        <button class="lang-choice-btn active" id="welcome-lang-kn">ಕನ್ನಡ (Default)</button>
+        <button class="lang-choice-btn" id="welcome-lang-en">English</button>
+      </div>
+
+      <div class="welcome-highlights">
+        <div class="highlight-chip">
+          <strong>1912 ಸೌಹಾರ್ದ ಪರಂಪರೆ · Heritage</strong>
+          Consecrated by Sree Narayana Guru, built by Hoige Bazar Koragappa.
+        </div>
+        <div class="highlight-chip">
+          <strong>ಶಾರದಾ ಮಾತೆ & ನವದುರ್ಗೆಯರು</strong>
+          1991 tradition featuring Mahaganapati, 9 Navadurgas & Grand Sharada Mathe.
+        </div>
+        <div class="highlight-chip">
+          <strong>ವಿಜಯದಶಮಿ ಶೋಭಾಯಾತ್ರೆ · Oct 20, 2026</strong>
+          60+ tableaux, Pili Vesha tiger dancers, chende drums & glowing Kudla streets.
+        </div>
+      </div>
+
+      <button class="start-tour-btn" id="btn-begin-tour">
+        ✨ 3D ಪ್ರವಾಸ ಪ್ರಾರಂಭಿಸಿ · Begin 3D Guided Tour
+      </button>
+      <div class="verify-notice" id="welcome-verify">
+        ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ · Please verify final timings with the temple.
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header id="top-hud">
+    <div class="hud-top-row">
+      <div class="brand-block">
+        <div class="brand-emblem">ॐ</div>
+        <div class="brand-titles">
+          <h1 id="hud-title">ಮಂಗಳೂರು ದಸರಾ ೨೦೨೬ · MANGALURU DASARA 2026</h1>
+          <p id="hud-subtitle">ಶ್ರೀ ಗೋಕರ್ಣನಾಥ ಕ್ಷೇತ್ರ, ಕುಡ್ರೋಳಿ · Sri Gokarnanatha Kshetra, Kudroli</p>
+        </div>
+      </div>
+
+      <div class="hud-controls">
+        <button class="hud-btn active" id="btn-lang-toggle" title="Switch Language">ಕನ್ನಡ ⇄ English</button>
+        <button class="hud-btn active" id="btn-mode-toggle">🧭 Guided Tour</button>
+        <button class="hud-btn" id="btn-follow-kiran">🎥 Follow Guide</button>
+        <button class="hud-btn" id="btn-open-tips">💡 Tips</button>
+        <button class="hud-btn" id="btn-open-quiz">🏆 Quiz (8)</button>
+        <button class="hud-btn" id="btn-open-transcript">📜 Transcript</button>
+        <button class="hud-btn" id="btn-open-settings">🔊 Audio & GFX</button>
+      </div>
+    </div>
+
+    <div class="stop-pills-bar" id="stop-pills-container"></div>
+  </header>
+
+  <!-- Contextual Interactive Bar (Stop 4 Alankara, Stop 5 Navadurgas, Stop 3 Timeline, Stop 9 Procession) -->
+  <div id="contextual-bar">
+    <!-- Stop 3: Historical Timeline Pillars Quick Jump -->
+    <div class="context-panel" id="panel-timeline">
+      <span class="context-title" id="lbl-timeline-bar">ಇತಿಹಾಸ ಸ್ತಂಭಗಳು · History Pillars:</span>
+      <div id="timeline-chips-row" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Stop 4: Day 1 to Day 9 Saree Alankara Selector -->
+    <div class="context-panel" id="panel-alankara">
+      <span class="context-title" id="lbl-alankara-bar">2026 ಶಾರದಾ ಮಾತೆ ಸೀರೆ ಅಲಂಕಾರ · Saree Alankara (Day 1–9):</span>
+      <div id="alankara-buttons-row" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Stop 5: Navadurga & Mahaganapati Selector -->
+    <div class="context-panel" id="panel-navadurga">
+      <span class="context-title" id="lbl-navadurga-bar">ಮೂರ್ತಿ ವೀಕ್ಷಿಸಿ · Inspect Deity:</span>
+      <div id="navadurga-buttons-row" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Stop 9: Procession Float Controls & Route -->
+    <div class="context-panel" id="panel-procession">
+      <button class="hud-btn active" id="btn-toggle-float">⏸️ Pause Float</button>
+      <div class="route-banner" id="route-banner-text">
+        Route (4:00–4:30 PM → 5:00 AM): Kudroli → Mannagudde → Ladyhill / Narayana Guru Circle → Lalbagh → PVS → Navabharath Circle → Hampankatta → Car Street → Alake → Kudroli
+      </div>
+    </div>
+  </div>
+
+  <!-- Compact Right-hand Info Drawer (Auto-closes after 8.5s) -->
+  <aside id="inspector-drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-tag" id="drawer-tag">HOTSPOT INFO</div>
+        <div class="drawer-title" id="drawer-title">Sri Gokarnanatha Kshetra</div>
+      </div>
+      <button class="drawer-close" id="btn-close-drawer">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-meta" id="drawer-meta"></div>
+    <div class="drawer-timer-bar">
+      <div class="drawer-timer-fill" id="drawer-timer-fill"></div>
+    </div>
+  </aside>
+
+  <!-- Bottom Narration & Controls Dock -->
+  <footer id="bottom-dock">
+    <div id="tts-notice">Kannada voice not available on this device; subtitles shown.</div>
+
+    <div class="narration-box">
+      <div class="narration-top">
+        <div class="guide-speaking-indicator">
+          <div class="voice-wave" id="voice-wave">
+            <span></span><span></span><span></span>
+          </div>
+          <span id="guide-speaker-label">ಕಿರಣ್ · ಮಂಗಳೂರು ಮಾರ್ಗದರ್ಶಿ (Kiran)</span>
+        </div>
+        <span id="stop-counter-label">Stop 1 / 10</span>
+      </div>
+      <div id="subtitle-text"></div>
+    </div>
+
+    <div class="dock-controls-row">
+      <div class="transport-btns">
+        <button class="hud-btn" id="btn-prev-stop">⏮️ Prev</button>
+        <button class="hud-btn active" id="btn-play-pause">⏸️ Pause</button>
+        <button class="hud-btn" id="btn-next-stop">Next ⏭️</button>
+        <button class="hud-btn" id="btn-replay-voice">🔄 Replay Voice</button>
+      </div>
+      <div class="Mandatory-footer-note" id="footer-verify-note">
+        ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ · Please verify final timings with the temple.
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: Visitor Tips (6 Bilingual Cards) -->
+  <div class="modal-backdrop" id="modal-tips">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="tips-modal-title">💡 ಭಕ್ತರು ಮತ್ತು ಪ್ರವಾಸಿಗರಿಗೆ ಮಾಹಿತಿ · Visitor Tips (6 Essential Cards)</h2>
+        <button class="drawer-close" data-close="modal-tips">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="tips-grid" id="tips-grid-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: 8-Question Cultural Quiz -->
+  <div class="modal-backdrop" id="modal-quiz">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="quiz-modal-title">🏆 ಮಂಗಳೂರು ದಸರಾ ರಸಪ್ರಶ್ನೆ · Cultural Quiz (8 Questions)</h2>
+        <button class="drawer-close" data-close="modal-quiz">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="quiz-score-banner" style="margin-bottom:14px;padding:12px;border-radius:10px;background:rgba(246,196,83,0.15);border:1px solid var(--gold);font-weight:700;text-align:center;"></div>
+        <div id="quiz-questions-container"></div>
+        <button class="hud-btn active" id="btn-reset-quiz" style="margin-top:10px;">🔄 Reset Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Full Bilingual Transcript -->
+  <div class="modal-backdrop" id="modal-transcript">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="transcript-modal-title">📜 ಸಂಪೂರ್ಣ ದ್ವಿಭಾಷಾ ನಿರೂಪಣೆ · Full Bilingual Transcript (Stops 1–10)</h2>
+        <button class="drawer-close" data-close="modal-transcript">✕</button>
+      </div>
+      <div class="modal-body" id="transcript-body-container"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Audio Mixer, Custom Chende Loader & Accessibility GFX -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>🔊 ಆಡಿಯೋ ಮಿಕ್ಸರ್ ಮತ್ತು ಗ್ರಾಫಿಕ್ಸ್ · Audio Mixer & Graphics</h2>
+        <button class="drawer-close" data-close="modal-settings">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mixer-row">
+          <label>Master Volume · ಮುಖ್ಯ ಧ್ವನಿ</label>
+          <input type="range" id="vol-master" min="0" max="1" step="0.02" value="0.85" />
+        </div>
+        <div class="mixer-row">
+          <label>Temple Ambience (Sa-Pa Drone & Veena) · ಸಂಗೀತ</label>
+          <input type="range" id="vol-music" min="0" max="1" step="0.02" value="0.55" />
+        </div>
+        <div class="mixer-row">
+          <label>Chende, Tase, Bells & Conch Effects · ಚೆಂಡೆ ಮತ್ತು ಗಂಟೆ</label>
+          <input type="range" id="vol-fx" min="0" max="1" step="0.02" value="0.75" />
+        </div>
+        <div class="mixer-row">
+          <label>Kiran Voice Narration Volume · ನಿರೂಪಣೆ ಧ್ವನಿ</label>
+          <input type="range" id="vol-voice" min="0" max="1" step="0.05" value="1.0" />
+        </div>
+
+        <div class="mixer-row" style="flex-direction:column;align-items:flex-start;">
+          <label style="font-weight:700;color:var(--gold-bright);">🥁 Custom Local Chende Audio File (.mp3, .wav, .m4a)</label>
+          <p style="font-size:12px;color:var(--text-muted);">
+            Optionally upload a local chende percussion audio file to play during Stops 8, 9 & 10 alongside or in place of procedural drums:
+          </p>
+          <input type="file" id="chende-file-input" accept=".mp3,.wav,.m4a,audio/*" style="margin-top:6px;color:#fff;" />
+          <div id="chende-file-status" style="font-size:12px;color:#4ade80;margin-top:4px;">Using built-in Web Audio procedural Chende & Tase synthesizer.</div>
+        </div>
+
+        <div class="mixer-row">
+          <div>
+            <strong>Low Graphics Mode · ಸರಳ ಗ್ರಾಫಿಕ್ಸ್</strong>
+            <div style="font-size:12px;color:var(--text-muted);">Disables UnrealBloom post-processing and hides extra particles for battery/performance.</div>
+          </div>
+          <button class="hud-btn" id="btn-toggle-lowgfx">OFF</button>
+        </div>
+
+        <div class="mixer-row">
+          <div>
+            <strong>Reduced Motion · ಕಡಿಮೆ ಚಲನೆ</strong>
+            <div style="font-size:12px;color:var(--text-muted);">Uses instant camera cuts instead of smooth cubic-eased camera fly-tos.</div>
+          </div>
+          <button class="hud-btn" id="btn-toggle-reducedmotion">OFF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION SCRIPT -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    /*************************************************************************
+     * 1. VERIFIED CULTURAL DATA, 2026 ALANKARA SCHEDULE, DEITIES & STOPS
+     *************************************************************************/
+    const ALANKARA_2026 = [
+      { day: 1, dateKn: 'ಭಾನುವಾರ 11 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Sun 11 Oct 2026', colorKn: 'ಕೆಂಪು (Red)', colorEn: 'Red (Navaratri begins)', hex: 0xd91b24, blouseHex: 0xfacc15, garlandHex: 0xfff3b0 },
+      { day: 2, dateKn: 'ಸೋಮವಾರ 12 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Mon 12 Oct 2026', colorKn: 'ಕ್ರೀಮ್ (Cream · ಉದ್ಘಾಟನೆ)', colorEn: 'Cream (Inauguration by CM, as reported)', hex: 0xf7eed6, blouseHex: 0xb91c1c, garlandHex: 0xfbbf24 },
+      { day: 3, dateKn: 'ಮಂಗಳವಾರ 13 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Tue 13 Oct 2026', colorKn: 'ಬಾಟಲ್ ಗ್ರೀನ್ (Bottle Green)', colorEn: 'Bottle Green', hex: 0x0b5345, blouseHex: 0xd97706, garlandHex: 0xfef08a },
+      { day: 4, dateKn: 'ಬುಧವಾರ 14 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Wed 14 Oct 2026', colorKn: 'ರಾಯಲ್ ಬ್ಲೂ (Royal Blue)', colorEn: 'Royal Blue', hex: 0x1d4ed8, blouseHex: 0xf59e0b, garlandHex: 0xffffff },
+      { day: 5, dateKn: 'ಗುರುವಾರ 15 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Thu 15 Oct 2026', colorKn: 'ಹಳದಿ (Yellow)', colorEn: 'Yellow', hex: 0xeab308, blouseHex: 0x991b1b, garlandHex: 0xffedd5 },
+      { day: 6, dateKn: 'ಶುಕ್ರವಾರ 16 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Fri 16 Oct 2026', colorKn: 'ಗಿಳಿ ಹಸಿರು (Parrot Green)', colorEn: 'Parrot Green', hex: 0x65a30d, blouseHex: 0xdc2626, garlandHex: 0xfef9c3 },
+      { day: 7, dateKn: 'ಶನಿವಾರ 17 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Sat 17 Oct 2026', colorKn: 'ಬೂದು (Grey)', colorEn: 'Grey', hex: 0x9ca3af, blouseHex: 0x7f1d1d, garlandHex: 0xfde047 },
+      { day: 8, dateKn: 'ಭಾನುವಾರ 18 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Sun 18 Oct 2026', colorKn: 'ನೇರಳೆ (Purple)', colorEn: 'Purple', hex: 0x7e22ce, blouseHex: 0xfacc15, garlandHex: 0xfef08a },
+      { day: 9, dateKn: 'ಸೋಮವಾರ 19 ಅಕ್ಟೋಬರ್ 2026', dateEn: 'Mon 19 Oct 2026', colorKn: 'ನವಿಲು ಹಸಿರು (Peacock Green · ಮಹಾನವಮಿ)', colorEn: 'Peacock Green (Mahanavami & Ayudha Puja)', hex: 0x0d9488, blouseHex: 0xd97706, garlandHex: 0xffffff }
+    ];
+
+    const NAVADURGA_LIST = [
+      {
+        id: 'ganapati',
+        nameKn: 'ಮಹಾಗಣಪತಿ',
+        nameEn: 'Mahaganapati',
+        vahanaKn: 'ಮೂಷಿಕ (ಇಲಿ)',
+        vahanaEn: 'Mooshika (Mouse)',
+        symbolsKn: 'ಪಾಶ, ಅಂಕುಶ, ಮೋದಕ ಮತ್ತು ಅಭಯ ಹಸ್ತ',
+        symbolsEn: 'Pasha, Ankusha, Modaka & Abhaya Hasta',
+        storyKn: 'ಯಾವುದೇ ಶುಭ ಕಾರ್ಯಕ್ಕೂ ಮುನ್ನ ವಿಘ್ನ ನಿವಾರಕ ಮಹಾಗಣಪತಿಯ ಪೂಜೆ ನಡೆಯುತ್ತದೆ. 1991ರಿಂದ ಕುಡ್ರೋಳಿ ದರ್ಬಾರ್ ಮಂಟಪದಲ್ಲಿ ಶಾರದಾ ಮಾತೆ ಮತ್ತು ನವದುರ್ಗೆಯರೊಂದಿಗೆ ಮಹಾಗಣಪತಿಯನ್ನು ಪ್ರತಿಷ್ಠಾಪಿಸಲಾಗುತ್ತಿದೆ.',
+        storyEn: 'Worshipped first as the remover of obstacles. Since 1991, Kudroli installs Mahaganapati alongside Sharada Mathe and the nine Navadurgas in the grand Darbar hall.',
+        color: 0xff8c24
+      },
+      {
+        id: 'shailaputri',
+        nameKn: '೧. ಶೈಲಪುತ್ರಿ',
+        nameEn: '1. Shailaputri',
+        vahanaKn: 'ನಂದಿ (ವೃಷಭ)',
+        vahanaEn: 'Nandi (Bull)',
+        symbolsKn: 'ತ್ರಿಶೂಲ ಮತ್ತು ಕಮಲ',
+        symbolsEn: 'Trishula (Trident) & Lotus',
+        storyKn: 'ಪರ್ವತರಾಜ ಹಿಮವಂತನ ಪುತ್ರಿಯಾದ ಶೈಲಪುತ್ರಿ ನವದುರ್ಗೆಯರ ಮೊದಲ ಸ್ವರೂಪ. ಸ್ಥಿರತೆ ಮತ್ತು ಪ್ರಕೃತಿಯ ಶಕ್ತಿಯನ್ನು ಪ್ರತಿನಿಧಿಸುತ್ತಾಳೆ.',
+        storyEn: 'Daughter of the Mountain King Himavan and the first form among the Navadurgas, embodying steadfastness and nature.',
+        color: 0xef4444
+      },
+      {
+        id: 'brahmacharini',
+        nameKn: '೨. ಬ್ರಹ್ಮಚಾರಿಣಿ',
+        nameEn: '2. Brahmacharini',
+        vahanaKn: 'ಬರಿಗಾಲಿನಲ್ಲಿ ಸಂಚರಿಸುವ ತಪಸ್ವಿನಿ',
+        vahanaEn: 'Walks barefoot in austere penance',
+        symbolsKn: 'ಜಪಮಾಲೆ ಮತ್ತು ಕಮಂಡಲ',
+        symbolsEn: 'Japamala (Rosary) & Kamandalu (Water pot)',
+        storyKn: 'ಕಠಿಣ ತಪಸ್ಸು, ಜ್ಞಾನ ಮತ್ತು ಭಕ್ತಿಯ ಪ್ರತೀಕವಾದ ಎರಡನೇ ಸ್ವರೂಪ ಬ್ರಹ್ಮಚಾರಿಣಿ.',
+        storyEn: 'The second form of Mother Durga representing sacred penance, spiritual devotion, and wisdom.',
+        color: 0xf8fafc
+      },
+      {
+        id: 'chandraghanta',
+        nameKn: '೩. ಚಂದ್ರಘಂಟಾ',
+        nameEn: '3. Chandraghanta',
+        vahanaKn: 'ಹುಲಿ / ಸಿಂಹ',
+        vahanaEn: 'Tigress / Lion',
+        symbolsKn: 'ಹಣೆಯ ಮೇಲೆ ಗಂಟೆಯ ಆಕಾರದ ಅರ್ಧಚಂದ್ರ, ದಶಭುಜ ಆಯುಧಗಳು',
+        symbolsEn: 'Bell-shaped crescent moon on forehead, ten-armed weapons',
+        storyKn: 'ಶಾಂತಿ ಮತ್ತು ಶೌರ್ಯದ ಸಂಕೇತವಾದ ಮೂರನೇ ಸ್ವರೂಪ. ಇವಳ ಗಂಟೆಯ ನಾದ ದುಷ್ಟ ಶಕ್ತಿಗಳನ್ನು ದೂರ ಮಾಡುತ್ತದೆ.',
+        storyEn: 'The third form wearing the crescent moon like a temple bell on her brow, radiating courage and serenity.',
+        color: 0xf59e0b
+      },
+      {
+        id: 'kushmanda',
+        nameKn: '೪. ಕೂಷ್ಮಾಂಡಿನಿ (ಕೂಷ್ಮಾಂಡ)',
+        nameEn: '4. Kushmanda (Kooshmandini)',
+        vahanaKn: 'ಸಿಂಹ',
+        vahanaEn: 'Lion',
+        symbolsKn: 'ಅಷ್ಟಭುಜಗಳಲ್ಲಿ ಕಮಂಡಲ, ಧನುಸ್ಸು, ಬಾಣ, ಕಮಲ, ಅಮೃತ ಕಲಶ, ಚಕ್ರ, ಗದೆ',
+        symbolsEn: 'Eight arms holding lotus, अमृत kalasha, bow, arrow, chakra, mace & rosary',
+        storyKn: 'ತನ್ನ ಮಂದಹಾಸದಿಂದಲೇ ಬ್ರಹ್ಮಾಂಡಕ್ಕೆ ಚೈತನ್ಯ ನೀಡಿದ ನಾಲ್ಕನೇ ನವದುರ್ಗಾ ಸ್ವರೂಪ ಕೂಷ್ಮಾಂಡಿನಿ.',
+        storyEn: 'Celebrated as the fourth form whose radiant smile illuminates the cosmos with life and energy.',
+        color: 0x22c55e
+      },
+      {
+        id: 'skandamata',
+        nameKn: '೫. ಸ್ಕಂದಮಾತಾ',
+        nameEn: '5. Skandamata',
+        vahanaKn: 'ಸಿಂಹ',
+        vahanaEn: 'Lion',
+        symbolsKn: 'ಮಡಿಲಲ್ಲಿ ಬಾಲ ಕಾರ್ತಿಕೇಯ (ಸ್ಕಂದ) ಮತ್ತು ಕಮಲ ಪುಷ್ಪಗಳು',
+        symbolsEn: 'Young Kartikeya (Skanda) seated on her lap & lotus flowers',
+        storyKn: 'ಕುಮಾರ ಸ್ಕಂದನ ತಾಯಿಯಾದ ಐದನೇ ಸ್ವರೂಪ. ಮಾತೃವಾತ್ಸಲ್ಯ ಮತ್ತು ಕರುಣೆಯ ಪ್ರತೀಕ.',
+        storyEn: 'Mother of Lord Skanda (Kartikeya), the fifth form symbolizing pure maternal love and grace.',
+        color: 0x3b82f6
+      },
+      {
+        id: 'katyayani',
+        nameKn: '೬. ಕಾತ್ಯಾಯನಿ',
+        nameEn: '6. Katyayani',
+        vahanaKn: 'ಸಿಂಹ',
+        vahanaEn: 'Lion',
+        symbolsKn: 'ಖಡ್ಗ, ಕಮಲ, ಅಭಯ ಮತ್ತು ವರದ ಮುದ್ರೆ',
+        symbolsEn: 'Sword, Lotus, Abhaya & Varada Mudras',
+        storyKn: 'ಕಾತ್ಯಾಯನ ಮಹರ್ಷಿಗಳ ತಪಸ್ಸಿಗೆ ಒಲಿದು ಅವತರಿಸಿದ ಆರನೇ ಸ್ವರೂಪ; ಧರ್ಮ ರಕ್ಷಕಿ.',
+        storyEn: 'Born to Sage Katyayana in answer to his prayers, the sixth warrior form who protects righteousness.',
+        color: 0xeab308
+      },
+      {
+        id: 'mahakali',
+        nameKn: '೭. ಮಹಾಕಾಳಿ (ಕುಡ್ರೋಳಿ ಪರಂಪರೆ)',
+        nameEn: '7. Mahakali (Kudroli Tradition)',
+        vahanaKn: 'ಸಿಂಹ / ಶವ ರೂಪಿ ತತ್ವ',
+        vahanaEn: 'Fierce cosmic guardian mount',
+        symbolsKn: 'ತ್ರಿಶೂಲ, ಖಡ್ಗ ಮತ್ತು ಅಭಯ ಹಸ್ತ',
+        symbolsEn: 'Trishula, Sword & Protective Hand',
+        storyKn: 'ಸಾಂಪ್ರದಾಯಿಕ ಪಟ್ಟಿಯಲ್ಲಿ 7ನೇ ಸ್ವರೂಪವನ್ನು ಕಾಲರಾತ್ರಿ ಎಂದು ಕರೆದರೆ, ಕುಡ್ರೋಳಿ ಶ್ರೀ ಗೋಕರ್ಣನಾಥ ಕ್ಷೇತ್ರದ ವಿಶೇಷ ಪರಂಪರೆಯಲ್ಲಿ 7ನೇ ಸ್ವರೂಪವನ್ನು ಭದ್ರಕಾಳಿ / ಮಹಾಕಾಳಿ ಎಂದು ಭಕ್ತಿಯಿಂದ ಪೂಜಿಸಲಾಗುತ್ತದೆ.',
+        storyEn: 'While traditional Sanskrit lists name Kalaratri as the 7th form, Kudroli Sri Gokarnanatha Kshetra respectfully worships and names the 7th form as Mahakali.',
+        color: 0x9333ea
+      },
+      {
+        id: 'mahagauri',
+        nameKn: '೮. ಮಹಾಗೌರಿ',
+        nameEn: '8. Mahagauri',
+        vahanaKn: 'ಶ್ವೇತ ವೃಷಭ (ಬಿಳಿ ಎತ್ತು)',
+        vahanaEn: 'White Bull (Vrishabha)',
+        symbolsKn: 'ತ್ರಿಶೂಲ ಮತ್ತು ಡಮರುಗ',
+        symbolsEn: 'Trishula & Damaru',
+        storyKn: 'ಶಂಖ, ಚಂದ್ರ ಮತ್ತು ಮಲ್ಲಿಗೆಯಂತೆ ಪರಿಶುದ್ಧ ಶ್ವೇತ ವರ್ಣದ ಎಂಟನೇ ಸ್ವರೂಪ ಮಹಾಗೌರಿ.',
+        storyEn: 'The eighth form, luminous and pure white, blessing devotees with peace and spiritual renewal.',
+        color: 0xfbcfe8
+      },
+      {
+        id: 'siddhidatri',
+        nameKn: '೯. ಸಿದ್ಧಿದಾತ್ರಿ',
+        nameEn: '9. Siddhidatri',
+        vahanaKn: 'ಕಮಲ ಪೀಠ ಮತ್ತು ಸಿಂಹ',
+        vahanaEn: 'Seated on a Lotus / Lion',
+        symbolsKn: 'ಚಕ್ರ, ಗದೆ, ಶಂಖ ಮತ್ತು ಕಮಲ',
+        symbolsEn: 'Chakra, Gada (Mace), Conch & Lotus',
+        storyKn: 'ಸಕಲ ಸಿದ್ಧಿಗಳನ್ನು ಮತ್ತು ಜ್ಞಾನವನ್ನು ಕರುಣಿಸುವ ಒಂಬತ್ತನೇ ನವದುರ್ಗಾ ಸ್ವರೂಪ ಸಿದ್ಧಿದಾತ್ರಿ.',
+        storyEn: 'The ninth form who bestows spiritual fulfillment, wisdom, and harmony upon all creation.',
+        color: 0x14b8a6
+      }
+    ];
+
+    const TIMELINE_EVENTS = [
+      {
+        year: '1912',
+        titleKn: '೧೯೧೨ · ಕ್ಷೇತ್ರ ಸ್ಥಾಪನೆ ಮತ್ತು ಶಿವಲಿಂಗ ಪ್ರತಿಷ್ಠಾಪನೆ',
+        titleEn: '1912 · Foundation & Shiva Linga Consecration',
+        descKn: 'ಹೊಯ್ಗೆ ಬಜಾರ್ ಕೊರಗಪ್ಪನವರಿಂದ ನಿರ್ಮಾಣ. ಅನೇಕ ಸಮುದಾಯಗಳಿಗೆ ದೇವಾಲಯ ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದ್ದ ಕಾಲದಲ್ಲಿ, ಮಹಾನ್ ಸಮಾಜ ಸುಧಾರಕ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳು ಸ್ವತಃ ಶಿವಲಿಂಗವನ್ನು ತಂದು ಪ್ರತಿಷ್ಠಾಪಿಸಿ ಆಧ್ಯಾತ್ಮಿಕ ಸಮಾನತೆಯನ್ನು ಸಾರಿದರು.',
+        descEn: 'Built in 1912 by Hoige Bazar Koragappa. Great social reformer Sree Narayana Guru personally brought and consecrated the Shiva Linga when many communities were denied temple entry, proclaiming spiritual equality.'
+      },
+      {
+        year: '1966',
+        titleKn: '೧೯೬೬ · ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಅಮೃತಶಿಲಾ ಪ್ರತಿಮೆ',
+        titleEn: '1966 · Sree Narayana Guru Marble Statue',
+        descKn: 'ದೇವಾಲಯದ ಪ್ರವೇಶದ್ವಾರದ ಬಳಿ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಸುಂದರ ಅಮೃತಶಿಲೆಯ ಪ್ರತಿಮೆಯನ್ನು 1966ರಲ್ಲಿ ಸ್ಥಾಪಿಸಲಾಯಿತು.',
+        descEn: 'A serene marble statue of Sree Narayana Guru was installed near the temple entrance in 1966.'
+      },
+      {
+        year: '1991',
+        titleKn: '೧೯೯೧ · ಶಾರದಾ ಮಾತೆ ಮತ್ತು ನವದುರ್ಗೆಯರ ಆರಾಧನೆ ಆರಂಭ',
+        titleEn: '1991 · Sharada Mathe & Nine Navadurgas Installed',
+        descKn: '1991ರಿಂದ ಕುಡ್ರೋಳಿ ಕ್ಷೇತ್ರದಲ್ಲಿ ದೇಶದ ಅತಿ ದೊಡ್ಡ ಶಾರದಾ ಮೂರ್ತಿಗಳಲ್ಲಿ ಒಂದಾದ ವೀಣಾಧಾರಿಣಿ ಶಾರದಾ ಮಾತೆ, ಮಹಾಗಣಪತಿ ಮತ್ತು ಒಂಬತ್ತು ನವದುರ್ಗೆಯರನ್ನು ಒಂದೇ ಮಂಟಪದಲ್ಲಿ ಪ್ರತಿಷ್ಠಾಪಿಸುವ ಪರಂಪರೆ ಆರಂಭವಾಯಿತು.',
+        descEn: 'Since 1991, Kudroli has installed all nine Navadurgas and Sharada Mathe holding an ornate silver veena (one of the largest Sharada idols in the country) alongside Mahaganapati.'
+      },
+      {
+        year: '1995',
+        titleKn: '೧೯೯೫ · ಭವ್ಯ ಸ್ತಬ್ಧಚಿತ್ರಗಳ (Tableaux) ಸೇರ್ಪಡೆ',
+        titleEn: '1995 · Grand Tableaux Join the Procession',
+        descKn: '1995ರಲ್ಲಿ ವಿಜಯದಶಮಿ ಶೋಭಾಯಾತ್ರೆಗೆ ಸ್ತಬ್ಧಚಿತ್ರಗಳು ಸೇರ್ಪಡೆಗೊಂಡವು. ಕಳೆದ ವರ್ಷದ ಮೆರವಣಿಗೆಯಲ್ಲಿ 60ಕ್ಕೂ ಹೆಚ್ಚು ಸ್ತಬ್ಧಚಿತ್ರಗಳು ಭಾಗವಹಿಸಿದ್ದವು.',
+        descEn: 'Illuminated tableaux joined the grand procession in 1995, with last year’s procession featuring 60+ tableaux.'
+      },
+      {
+        year: '2026',
+        titleKn: '೨೦೨೬ · ಮಂಗಳೂರು ದಸರಾ (ಅಕ್ಟೋಬರ್ 11 – 20, 2026)',
+        titleEn: '2026 · Mangaluru Dasara (11 – 20 October 2026)',
+        descKn: 'ಅಕ್ಟೋಬರ್ 11ರಂದು ನವರಾತ್ರಿ ಪ್ರಾರಂಭ, ಅಕ್ಟೋಬರ್ 12ರಂದು ಮುಖ್ಯಮಂತ್ರಿಗಳಿಂದ ಉದ್ಘಾಟನೆ (ವರದಿಯಂತೆ), ಅಕ್ಟೋಬರ್ 19 ಮಹಾನವಮಿ ಹಾಗೂ ಅಕ್ಟೋಬರ್ 20ರಂದು ವಿಜಯದಶಮಿ ಬೃಹತ್ ಶೋಭಾಯಾತ್ರೆ.',
+        descEn: 'Navaratri begins Sun 11 Oct 2026; inauguration on Mon 12 Oct by the Chief Minister of Karnataka (as reported); Mahanavami on Mon 19 Oct; Vijayadashami Grand Procession on Tue 20 Oct 2026.'
+      }
+    ];
+
+    const TOUR_STOPS = [
+      {
+        id: 1,
+        pillKn: '೧. ನಮ್ಮ ಕುಡ್ಲಕ್ಕೆ ಸ್ವಾಗತ',
+        pillEn: '1. Welcome to Kudla',
+        camPos: [0, 38, 68],
+        camTarget: [0, 6, 0],
+        kiranPos: [0, 0, 24],
+        gesture: 'namaskara',
+        sentencesKn: [
+          'ನಮಸ್ಕಾರ! ನಮ್ಮ ಪ್ರೀತಿಯ ಕುಡ್ಲದ ಶ್ರೀ ಗೋಕರ್ಣನಾಥ ಕ್ಷೇತ್ರ ಕುಡ್ರೋಳಿಯ ಮಂಗಳೂರು ದಸರಾ ಎರಡು ಸಾವಿರದ ಇಪ್ಪತ್ತಾರಕ್ಕೆ ನಿಮಗೆಲ್ಲರಿಗೂ ಆತ್ಮೀಯ ಸ್ವಾಗತ.',
+          'ನಾನು ಕಿರಣ್, ನಿಮ್ಮ ಮಂಗಳೂರು ಮಾರ್ಗದರ್ಶಿ.',
+          'ಮೈಸೂರು ದಸರಾ ರಾಜಪರಂಪರೆಯ ಉತ್ಸವವಾದರೆ, ಮಂಗಳೂರು ದಸರಾ ಯಾವುದೇ ರಾಜಮನೆತನ ಅಥವಾ ಸರ್ಕಾರದ ಅನುದಾನವಿಲ್ಲದೆ ಜನಸಾಮಾನ್ಯರೇ ಸೇರಿ ಆಚರಿಸುವ ಹೆಮ್ಮೆಯ ಜನತೆಯ ನಾಡಹಬ್ಬ.',
+          'ಲಕ್ಷಾಂತರ ವಿದ್ಯುದ್ದೀಪಗಳಿಂದ ಕಂಗೊಳಿಸುತ್ತಿರುವ ಈ ದಿವ್ಯ ಕ್ಷೇತ್ರದ ಹತ್ತು ವಿಶೇಷ ತಾಣಗಳನ್ನು ಈಗ ಒಂದೊಂದಾಗಿ ನೋಡೋಣ.'
+        ],
+        sentencesEn: [
+          'Namaskara! Welcome to Mangaluru Dasara 2026 at Sri Gokarnanatha Kshetra, Kudroli, in our beloved coastal city affectionately called Kudla.',
+          'I am Kiran, your local Mangaluru guide.',
+          'While Mysuru Dasara stems from royal patronage, Mangaluru Dasara is celebrated without royal or government funding—it is truly the common man’s Dasara, a people’s Naada Habba.',
+          'Let us explore the ten glowing zones of this sacred festival together.'
+        ]
+      },
+      {
+        id: 2,
+        pillKn: '೨. ಸ್ವರ್ಣ ಗೋಪುರ ಮತ್ತು ಪ್ರವೇಶ',
+        pillEn: '2. The Golden Gopuram',
+        camPos: [0, 11, 40],
+        camTarget: [0, 11, 14],
+        kiranPos: [-4, 0, 22],
+        gesture: 'point',
+        sentencesKn: [
+          'ಇದೇ ನೋಡಿ ಭವ್ಯವಾದ ಏಳು ಅಂತಸ್ತಿನ ಸ್ವರ್ಣ ಗೋಪುರ ಮತ್ತು ಚಿನ್ನದ ಕಳಶಗಳು.',
+          'ಈ ದೇವಾಲಯ ಸಂಕೀರ್ಣದಲ್ಲಿ ಪುರಾಣ ಮತ್ತು ಮಹಾಕಾವ್ಯಗಳ ವರ್ಣಚಿತ್ರಗಳಿಂದ ಅಲಂಕೃತವಾದ ನಾಲ್ಕು ತಮಿಳು ಶೈಲಿಯ ರಾಜಗೋಪುರಗಳಿವೆ.',
+          'ಪ್ರವೇಶದ್ವಾರದ ಬಳಿ ಸಾವಿರದ ಒಂಬೈನೂರ ಅರವತ್ತಾರರಲ್ಲಿ ಸ್ಥಾಪಿಸಲಾದ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಅಮೃತಶಿಲೆಯ ಪ್ರತಿಮೆಯನ್ನು ನೀವು ಕಾಣಬಹುದು.',
+          'ಒಳಗೆ ಪ್ರವೇಶಿಸುವ ಮುನ್ನ ಪಾದರಕ್ಷೆ ಕೌಂಟರ್ನಲ್ಲಿ ಚಪ್ಪಲಿಗಳನ್ನು ಬಿಟ್ಟು, ಹಸಿರು ಹಾಸಿನ ಮೇಲೆ ಭಕ್ತಿಯಿಂದ ನಡೆಯೋಣ.'
+        ],
+        sentencesEn: [
+          'Behold the illuminated seven-tiered Golden Gopuram crowned with shining golden kalashas.',
+          'The temple complex features four Tamil-style gopurams richly decorated with murals from mythology and epics.',
+          'Near the entrance stands the peaceful marble statue of Sree Narayana Guru, installed in 1966.',
+          'As per temple etiquette, visitors leave their footwear at the dedicated counter before stepping onto the green carpet walkway and reflective marble floor.'
+        ]
+      },
+      {
+        id: 3,
+        pillKn: '೩. ಪುಷ್ಕರಿಣಿ ಮತ್ತು ಇತಿಹಾಸ',
+        pillEn: '3. Temple Pond & History',
+        camPos: [-34, 10, 18],
+        camTarget: [-22, 4, 2],
+        kiranPos: [-16, 0, 10],
+        gesture: 'point',
+        sentencesKn: [
+          'ಇದು ಕ್ಷೇತ್ರದ ಪವಿತ್ರ ಪುಷ್ಕರಿಣಿ.',
+          'ಇಲ್ಲಿ ಕಾರಂಜಿಗಳು, ನಾಲ್ಕು ಮೂಲೆಗಳಲ್ಲಿ ಪರಮೇಶ್ವರನ ಪ್ರತಿಮೆಗಳು ಹಾಗೂ ನೀರಿನಲ್ಲಿ ಪ್ರತಿಬಿಂಬಿತವಾಗುವ ಶ್ವೇತ ವರ್ಣದ ಕೈಲಾಸ ಪರ್ವತ ಮತ್ತು ನಂದಿಯ ಕಲಾಕೃತಿಗಳಿವೆ.',
+          'ಸಾವಿರದ ಒಂಬೈನೂರ ಹನ್ನೆರಡರಲ್ಲಿ ಹೊಯ್ಗೆ ಬಜಾರ್ ಕೊರಗಪ್ಪನವರು ಈ ಕ್ಷೇತ್ರವನ್ನು ನಿರ್ಮಿಸಿದರು.',
+          'ಅನೇಕ ಸಮುದಾಯಗಳಿಗೆ ದೇವಾಲಯ ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದ್ದ ಕಾಲದಲ್ಲಿ, ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳು ಸ್ವತಃ ಶಿವಲಿಂಗವನ್ನು ತಂದು ಪ್ರತಿಷ್ಠಾಪಿಸಿ ಆಧ್ಯಾತ್ಮಿಕ ಸಮಾನತೆಯನ್ನು ಸಾರಿದರು.'
+        ],
+        sentencesEn: [
+          'Here lies the sacred temple pond, the Pushkarini, shimmering with cyan and magenta tower reflections.',
+          'It features fountains and a statue of Lord Shiva at each of its four corners, alongside a sculpted white Mount Kailasa range and Nandi reflected in the water.',
+          'Built in 1912 by Hoige Bazar Koragappa, this temple made history when great social reformer Sree Narayana Guru personally brought and consecrated the Shiva Linga at a time when many communities were denied temple entry.',
+          'Click any of the five glowing timeline pillars from 1912 to 2026 to explore each milestone.'
+        ]
+      },
+      {
+        id: 4,
+        pillKn: '೪. ಶಾರದಾ ಮಾತೆ ದರ್ಬಾರ್',
+        pillEn: '4. Sharada Mathe Darbar',
+        camPos: [0, 6.5, -6],
+        camTarget: [0, 5.2, -20],
+        kiranPos: [-3.5, 0, -13],
+        gesture: 'bow',
+        sentencesKn: [
+          'ಇದು ಸ್ವರ್ಣ ಗಂಟೆಗಳು, ಕಲ್ಲಿನ ಕೆತ್ತನೆಯ ಹಿನ್ನೆಲೆ, ಕಾಲ್ದೀಪಗಳು ಮತ್ತು ಹೂವಿನ ರಂಗೋಲಿಯಿಂದ ಕಂಗೊಳಿಸುವ ಶಾರದಾ ಮಾತೆಯ ದರ್ಬಾರ್ ಮಂಟಪ.',
+          'ಸಾವಿರದ ಒಂಬೈನೂರ ತೊಂಬತ್ತೊಂದರಿಂದ ಇಲ್ಲಿ ದೇಶದ ಅತಿ ದೊಡ್ಡ ಶಾರದಾ ಮೂರ್ತಿಗಳಲ್ಲಿ ಒಂದಾದ, ಬೆಳ್ಳಿಯ ವೀಣೆಯನ್ನು ಹಿಡಿದ ಜ್ಞಾನ ಮತ್ತು ಸಂಗೀತದ ದೇವತೆ ಶಾರದಾ ಮಾತೆಯನ್ನು ಪ್ರತಿಷ್ಠಾಪಿಸಲಾಗುತ್ತಿದೆ.',
+          'ಮೇಲಿರುವ ದಿನ ಒಂದರಿಂದ ಒಂಬತ್ತರ ಅಲಂಕಾರ ಬಟನ್ಗಳನ್ನು ಒತ್ತಿ, ಎರಡು ಸಾವಿರದ ಇಪ್ಪತ್ತಾರರ ನವರಾತ್ರಿಯ ಪ್ರತಿದಿನದ ರೇಷ್ಮೆ ಸೀರೆ, ರವಿಕೆ ಮತ್ತು ಹೂವಿನ ಮಾಲೆಯ ಬಣ್ಣಗಳನ್ನು ನೇರವಾಗಿ ಬದಲಿಸಿ ನೋಡಿ!'
+        ],
+        sentencesEn: [
+          'Welcome to the Sharada Mathe Darbar hall, adorned with hanging golden bells, a carved backdrop, flickering brass kaal-deepa oil lamps, flower rangoli, and a circling aarti flame.',
+          'Since 1991, Kudroli has installed Sharada Mathe—goddess of knowledge, music, and learning, holding an ornate silver veena—one of the largest Sharada idols in the country.',
+          'Use the Day 1 to Day 9 Saree Alankara selector above to change her 2026 silk saree, blouse, and garland colours in real time!'
+        ]
+      },
+      {
+        id: 5,
+        pillKn: '೫. ನವದುರ್ಗೆಯರ ದರ್ಶನ',
+        pillEn: '5. Meet the Navadurgas',
+        camPos: [0, 8.5, -3],
+        camTarget: [0, 4.5, -20],
+        kiranPos: [3.5, 0, -12],
+        gesture: 'bow',
+        sentencesKn: [
+          'ಶಾರದಾ ಮಾತೆಯ ಸುತ್ತಲೂ ಅರ್ಧಚಂದ್ರಾಕಾರದ ಸ್ವರ್ಣ ಮಂಟಪದಲ್ಲಿ ಮಹಾಗಣಪತಿ ಹಾಗೂ ಒಂಬತ್ತು ನವದುರ್ಗೆಯರು ವಿರಾಜಮಾನರಾಗಿದ್ದಾರೆ.',
+          'ಶೈಲಪುತ್ರಿ, ಬ್ರಹ್ಮಚಾರಿಣಿ, ಚಂದ್ರಘಂಟಾ, ಕೂಷ್ಮಾಂಡಿನಿ, ಸ್ಕಂದಮಾತಾ, ಕಾತ್ಯಾಯನಿ, ಮಹಾಕಾಳಿ, ಮಹಾಗೌರಿ ಮತ್ತು ಸಿದ್ಧಿದಾತ್ರಿ ಇವರೇ ಆ ಒಂಬತ್ತು ಸ್ವರೂಪಗಳು.',
+          'ಸಾಂಪ್ರದಾಯಿಕ ಪಟ್ಟಿಯಲ್ಲಿ ಏಳನೇ ಸ್ವರೂಪವನ್ನು ಕಾಲರಾತ್ರಿ ಎಂದು ಕರೆದರೆ, ಕುಡ್ರೋಳಿ ಕ್ಷೇತ್ರದಲ್ಲಿ ಮಹಾಕಾಳಿ ಎಂದು ಗೌರವದಿಂದ ಪೂಜಿಸಲಾಗುತ್ತದೆ.',
+          'ಯಾವುದೇ ಮೂರ್ತಿಯ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ನಾನು ಅಲ್ಲಿಗೆ ನಡೆದು ನಮಸ್ಕರಿಸುತ್ತೇನೆ ಮತ್ತು ಆ ದೇವಿಯ ವಾಹನ ಹಾಗೂ ಕಥೆಯನ್ನು ತೋರಿಸುತ್ತೇನೆ.'
+        ],
+        sentencesEn: [
+          'Surrounding Sharada Mathe in a semicircular golden mantapa are Mahaganapati and all nine Navadurgas.',
+          'In Kudroli’s sequence, they are Shailaputri, Brahmacharini, Chandraghanta, Kushmanda, Skandamata, Katyayani, Mahakali, Mahagauri, and Siddhidatri.',
+          'Notice that while traditional lists name Kalaratri as the seventh form, Kudroli respectfully names and worships Mahakali.',
+          'Click any 3D idol or quick-jump chip above to fly closer, watch me bow before the deity, and inspect her vahana, symbols, and story.'
+        ]
+      },
+      {
+        id: 6,
+        pillKn: '೬. ಪ್ರತಿಷ್ಠಾಪನಾ ವೇದಿಕೆ',
+        pillEn: '6. Pratishthapana',
+        camPos: [25, 6.5, -4],
+        camTarget: [25, 3.5, -15],
+        kiranPos: [21, 0, -10],
+        gesture: 'namaskara',
+        sentencesKn: [
+          'ನವರಾತ್ರಿಯ ಮೊದಲ ದಿನ ಪವಿತ್ರ ಕಲಶ, ತೆಂಗಿನಕಾಯಿ, ಮಾವಿನ ಎಲೆ ಮತ್ತು ಮಂಗಳ ದೀಪಗಳೊಂದಿಗೆ ಮೂರ್ತಿಗಳ ಪ್ರತಿಷ್ಠಾಪನೆ ನೆರವೇರುತ್ತದೆ.',
+          'ಕ್ಷೇತ್ರದ ಸಂಪ್ರದಾಯದಂತೆ ಅರ್ಚಕ ವೃಂದದವರು ಶಾಸ್ತ್ರೋಕ್ತವಾಗಿ ಈ ಎಲ್ಲಾ ಪೂಜಾ ವಿಧಿವಿಧಾನಗಳನ್ನು ನೆರವೇರಿಸುತ್ತಾರೆ.',
+          'ದಯವಿಟ್ಟು ಅಂತಿಮ ಪೂಜಾ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.'
+        ],
+        sentencesEn: [
+          'At the start of Navaratri, the sacred Pratishthapana consecration stage is prepared with a silver kalasha, coconut, mango leaves, and ceremonial oil lamps.',
+          'Exact consecration rituals and mantras are performed by the temple priests strictly as per tradition.',
+          'Please verify final timings with the temple.'
+        ]
+      },
+      {
+        id: 7,
+        pillKn: '೭. ನವರಾತ್ರಿಯ ೯ ರಾತ್ರಿಗಳು (2026)',
+        pillEn: '7. Nine Nights of Navaratri (2026)',
+        camPos: [28, 9, 20],
+        camTarget: [20, 4, 5],
+        kiranPos: [16, 0, 12],
+        gesture: 'wave',
+        sentencesKn: [
+          'ಎರಡು ಸಾವಿರದ ಇಪ್ಪತ್ತಾರರ ಅಕ್ಟೋಬರ್ ಹನ್ನೊಂದರಿಂದ ಹತ್ತೊಂಬತ್ತರವರೆಗೆ ಒಂಬತ್ತು ರಾತ್ರಿಗಳ ಕಾಲ ಈ ಒಂಬತ್ತು ಬಣ್ಣದ ದ್ವಾರಗಳು ಪ್ರತಿದಿನದ ಅಲಂಕಾರ ಬಣ್ಣವನ್ನು ಸೂಚಿಸುತ್ತವೆ.',
+          'ವರದಿಯಂತೆ ಅಕ್ಟೋಬರ್ ಹನ್ನೆರಡರಂದು ಕರ್ನಾಟಕದ ಮುಖ್ಯಮಂತ್ರಿಗಳಿಂದ ದಸರಾ ಉದ್ಘಾಟನೆ ಹಾಗೂ ಅಕ್ಟೋಬರ್ ಹತ್ತೊಂಬತ್ತರಂದು ಮಹಾನವಮಿ ಮತ್ತು ಆಯುಧ ಪೂಜೆ ನಡೆಯಲಿದೆ.',
+          'ಪ್ರತಿದಿನ ವಿಶೇಷ ಪೂಜೆಗಳು, ಸಂಜೆ ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಸಾವಿರಾರು ಭಕ್ತರಿಗೆ ಅನ್ನದಾನ ನೆರವೇರುತ್ತದೆ.'
+        ],
+        sentencesEn: [
+          'These nine glowing arches shine in the nine daily alankara colours from Sunday 11 October to Monday 19 October 2026.',
+          'Day 2 features the Dasara inauguration by the Chief Minister of Karnataka, as reported, while Day 9 celebrates Mahanavami and Ayudha Puja.',
+          'Throughout the festival, daily pujas, evening cultural programmes, and Annadana—free meals for thousands of devotees—take place continuously.'
+        ]
+      },
+      {
+        id: 8,
+        pillKn: '೮. ವಿಜಯದಶಮಿ ಸಂಭ್ರಮ',
+        pillEn: '8. Vijayadashami',
+        camPos: [-12, 8, 28],
+        camTarget: [0, 5, 12],
+        kiranPos: [-6, 0, 20],
+        gesture: 'namaskara',
+        sentencesKn: [
+          'ಅಕ್ಟೋಬರ್ ಇಪ್ಪತ್ತು, ಎರಡು ಸಾವಿರದ ಇಪ್ಪತ್ತಾರು ಮಂಗಳವಾರ ವಿಜಯದಶಮಿಯ ಪವಿತ್ರ ದಿನ.',
+          'ಮಹಿಷಾಸುರನ ವಿರುದ್ಧ ದುರ್ಗಾದೇವಿಯ ವಿಜಯ ಹಾಗೂ ಕೆಡುಕಿನ ಮೇಲೆ ಒಳಿತಿನ ಜಯವನ್ನು ಈ ದಿನ ಸಂಭ್ರಮಿಸಲಾಗುತ್ತದೆ.',
+          'ಕೇಳಿ! ಶೋಭಾಯಾತ್ರೆಗೆ ಸಿದ್ಧವಾಗುತ್ತಿರುವ ಚೆಂಡೆ ವಾದ್ಯಗಳ ಮೃದುವಾದ ನಾದ ಈಗ ಪ್ರಾಂಗಣದಲ್ಲಿ ಮೊಳಗುತ್ತಿದೆ.'
+        ],
+        sentencesEn: [
+          'Tuesday, 20 October 2026 marks the sacred day of Vijayadashami.',
+          'It celebrates the triumph of good over evil and Goddess Durga’s victory over Mahishasura.',
+          'Listen closely—the traditional chende drums are warming up softly in the temple courtyard as preparations begin for the night-long grand procession.'
+        ]
+      },
+      {
+        id: 9,
+        pillKn: '೯. ಬೃಹತ್ ಶೋಭಾಯಾತ್ರೆ',
+        pillEn: '9. The Grand Procession',
+        camPos: [0, 9, 54],
+        camTarget: [0, 4, 34],
+        kiranPos: [8, 0, 42],
+        gesture: 'wave',
+        sentencesKn: [
+          'ಸಂಜೆ ನಾಲ್ಕರಿಂದ ನಾಲ್ಕುವರೆ ಗಂಟೆಯ ಸುಮಾರಿಗೆ ಆರಂಭವಾಗುವ ಮಂಗಳೂರು ದಸರಾ ಶೋಭಾಯಾತ್ರೆ ರಾತ್ರಿಯಿಡೀ ನಗರದ ರಾಜಬೀದಿಗಳಲ್ಲಿ ಸಂಚರಿಸುತ್ತದೆ.',
+          'ಕುಡ್ರೋಳಿಯಿಂದ ಮಣ್ಣಗುಡ್ಡೆ, ಲೇಡಿಹಿಲ್ ನಾರಾಯಣ ಗುರು ವೃತ್ತ, ಲಾಲ್ಬಾಗ್, ಪಿವಿಎಸ್, ನವಭಾರತ್ ವೃತ್ತ, ಹಂಪನಕಟ್ಟೆ, ಕಾರ್ ಸ್ಟ್ರೀಟ್ ಮತ್ತು ಅಳಕೆ ಮಾರ್ಗವಾಗಿ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಐದು ಗಂಟೆಗೆ ಮರಳಿ ಪುಷ್ಕರಿಣಿಯಲ್ಲಿ ಜಲಸ್ತಂಭನಗೊಳ್ಳುತ್ತದೆ.',
+          'ಅರವತ್ತಕ್ಕೂ ಹೆಚ್ಚು ಸ್ತಬ್ಧಚಿತ್ರಗಳು, ಹುಲಿವೇಷ ಕುಣಿತ, ಚೆಂಡೆ ಮತ್ತು ತಾಸೆಯ ಅಬ್ಬರ ಹಾಗೂ ಬಾಣಬಿರುಸುಗಳ ವೈಭವವನ್ನು ನೋಡಿ!'
+        ],
+        sentencesEn: [
+          'Starting around 4:00 to 4:30 PM on Vijayadashami, the Grand Procession travels through the city all night and returns around 5:00 AM the next morning for idol immersion in the temple pond.',
+          'It follows the approximate route from Kudroli to Mannagudde, Ladyhill Narayana Guru Circle, Lalbagh, PVS, Navabharath Circle, Hampankatta, Car Street, and Alake back to Kudroli.',
+          'Watch the leaping Pili Vesha tiger dancers, rhythmic chende and tase drummers, fireworks, and the decorated Sharada Mathe float—which you can pause or resume anytime!'
+        ]
+      },
+      {
+        id: 10,
+        pillKn: '೧೦. ತುಳುನಾಡಿನ ಚೈತನ್ಯ ಮತ್ತು ಸಮಾರೋಪ',
+        pillEn: '10. Tulunadu Spirit & Finale',
+        camPos: [0, 44, 78],
+        camTarget: [0, 8, 5],
+        kiranPos: [0, 0, 30],
+        gesture: 'namaskara',
+        sentencesKn: [
+          'ಪಿಲಿ ವೇಷ, ಚೆಂಡೆ ವಾದನ ಮತ್ತು ಕರಾವಳಿಯ ಪ್ರಸಿದ್ಧ ಕಲೆಯಾದ ಯಕ್ಷಗಾನ ತುಳುನಾಡಿನ ಸಾಂಸ್ಕೃತಿಕ ಚೈತನ್ಯಕ್ಕೆ ಸಾಕ್ಷಿಯಾಗಿವೆ.',
+          'ಒಂದೇ ಜಾತಿ, ಒಂದೇ ಮತ, ಒಂದೇ ದೇವರು ಎಂಬ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಏಕತೆಯ ಸಂದೇಶ ಇಡೀ ಮಂಗಳೂರು ದಸರಾದ ಆತ್ಮವಾಗಿದೆ.',
+          'ನಮ್ಮ ಕುಡ್ಲದ ದಸರಾ ಪ್ರವಾಸದಲ್ಲಿ ಭಾಗವಹಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು! ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ. ಸರ್ವರಿಗೂ ಶುಭವಾಗಲಿ!'
+        ],
+        sentencesEn: [
+          'Pili Vesha tiger dance, vibrant chende percussion, and Yakshagana—a celebrated coastal art form—reflect the living spirit of Tulunadu.',
+          'Above all, Sree Narayana Guru’s timeless message of human unity shines through every single lamp of Kudroli.',
+          'Thank you for joining me, Kiran, on this 3D journey through Mangaluru Dasara 2026! Please verify final timings with the temple. Namaskara!'
+        ]
+      }
+    ];
+
+    const VISITOR_TIPS = [
+      {
+        titleKn: '೧. ಪಾದರಕ್ಷೆ ಕೌಂಟರ್ ಮತ್ತು ವಸ್ತ್ರ ಸಂಹಿತೆ',
+        titleEn: '1. Footwear Counter & Dress Etiquette',
+        bodyKn: 'ದೇವಾಲಯದ ಪ್ರವೇಶದ್ವಾರದ ಬಳಿ ಇರುವ ಪಾದರಕ್ಷೆ ಕೌಂಟರ್ನಲ್ಲಿ ಚಪ್ಪಲಿಗಳನ್ನು ಬಿಟ್ಟು ಹಸಿರು ಹಾಸಿನ ಮೇಲೆ ನಡೆಯಿರಿ. ಸಾಂಪ್ರದಾಯಿಕ ಹಾಗೂ ಸಭ್ಯ ಉಡುಪು ಧರಿಸುವುದು ಸೂಕ್ತ.',
+        bodyEn: 'Leave footwear at the designated counter near the entrance before stepping onto the green carpet walkway. Modest, traditional festive attire is recommended.'
+      },
+      {
+        titleKn: '೨. ಅನ್ನದಾನ ಪ್ರಸಾದ ವ್ಯವಸ್ಥೆ',
+        titleEn: '2. Annadana (Free Meals for Devotees)',
+        bodyKn: 'ನವರಾತ್ರಿಯ ಎಲ್ಲಾ ದಿನಗಳಲ್ಲಿ ದೇವಾಲಯದಲ್ಲಿ ಭಕ್ತಾದಿಗಳಿಗೆ ಉಚಿತ ಅನ್ನದಾನ ಪ್ರಸಾದದ ವ್ಯವಸ್ಥೆ ಇರುತ್ತದೆ. ಸರತಿ ಸಾಲಿನಲ್ಲಿ ಶಿಸ್ತಿನಿಂದ ಪಾಲ್ಗೊಳ್ಳಿ.',
+        bodyEn: 'Free sacred meals (Annadana) are served to thousands of devotees daily throughout the festival. Follow volunteer guidance for smooth dining.'
+      },
+      {
+        titleKn: '೩. ಶೋಭಾಯಾತ್ರೆ ವೀಕ್ಷಣೆ ಮತ್ತು ಮಾರ್ಗ',
+        titleEn: '3. Grand Procession Route & Timing',
+        bodyKn: 'ಅಕ್ಟೋಬರ್ 20ರಂದು ಸಂಜೆ 4–4:30ಕ್ಕೆ ಶೋಭಾಯಾತ್ರೆ ಪ್ರಾರಂಭವಾಗಿ ಮಣ್ಣಗುಡ್ಡೆ, ಲೇಡಿಹಿಲ್, ಲಾಲ್ಬಾಗ್, ಪಿವಿಎಸ್, ಹಂಪನಕಟ್ಟೆ, ಕಾರ್ ಸ್ಟ್ರೀಟ್, ಅಳಕೆ ಮೂಲಕ ಬೆಳಿಗ್ಗೆ 5ಕ್ಕೆ ಮರಳುತ್ತದೆ.',
+        bodyEn: 'Starts around 4–4:30 PM on Oct 20, moving via Mannagudde, Ladyhill, Lalbagh, PVS, Navabharath Circle, Hampankatta, Car Street & Alake, returning around 5 AM.'
+      },
+      {
+        titleKn: '೪. ಸಂಜೆ ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು',
+        titleEn: '4. Evening Cultural Programmes',
+        bodyKn: 'ಪ್ರತಿದಿನ ಸಂಜೆ ಭಕ್ತಿಗೀತೆ, ಶಾಸ್ತ್ರೀಯ ಸಂಗೀತ, ನೃತ್ಯ ಮತ್ತು ಕರಾವಳಿಯ ಯಕ್ಷಗಾನ ಸೇರಿದಂತೆ ವಿಶೇಷ ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು ನಡೆಯುತ್ತವೆ.',
+        bodyEn: 'Enjoy daily pujas and vibrant evening cultural programmes showcasing music, dance, and coastal traditions like Yakshagana.'
+      },
+      {
+        titleKn: '೫. ಹಿರಿಯ ನಾಗರಿಕರು ಮತ್ತು ಮಕ್ಕಳ ಸುರಕ್ಷತೆ',
+        titleEn: '5. Crowd Care & Hydration',
+        bodyKn: 'ವಿದ್ಯುದ್ದೀಪಾಲಂಕಾರ ನೋಡಲು ಸಂಜೆ ಹೆಚ್ಚಿನ ಜನಸಂದಣಿ ಇರುವುದರಿಂದ ಕುಡಿಯುವ ನೀರು ಇಟ್ಟುಕೊಳ್ಳಿ ಮತ್ತು ಮಕ್ಕಳ ಕೈ ಹಿಡಿದುಕೊಳ್ಳಿ.',
+        bodyEn: 'Evenings draw large festive crowds admiring the lakhs of lights; keep water handy and stay close to children and elders.'
+      },
+      {
+        titleKn: '೬. ಸಮಯ ದೃಢೀಕರಣ ಸೂಚನೆ',
+        titleEn: '6. Mandatory Timing Verification',
+        bodyKn: 'ಹಬ್ಬದ ಪೂಜೆ ಮತ್ತು ಮೆರವಣಿಗೆಯ ಅಂತಿಮ ಸಮಯವನ್ನು ದಯವಿಟ್ಟು ದೇವಸ್ಥಾನದ ಅಧಿಕೃತ ಪ್ರಕಟಣೆಯೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.',
+        bodyEn: 'Always verify final puja and procession timings directly with the temple authorities.'
+      }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      {
+        qKn: '೧. ಕುಡ್ರೋಳಿ ಶ್ರೀ ಗೋಕರ್ಣನಾಥ ಕ್ಷೇತ್ರವನ್ನು 1912ರಲ್ಲಿ ನಿರ್ಮಿಸಿದವರು ಯಾರು ಮತ್ತು ಶಿವಲಿಂಗವನ್ನು ಪ್ರತಿಷ್ಠಾಪಿಸಿದವರು ಯಾರು?',
+        qEn: '1. Who built Kudroli Sri Gokarnanatha Kshetra in 1912 and who consecrated the Shiva Linga?',
+        optsKn: [
+          'ಹೊಯ್ಗೆ ಬಜಾರ್ ಕೊರಗಪ್ಪ ನಿರ್ಮಿಸಿದರು ಮತ್ತು ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳು ಶಿವಲಿಂಗ ಪ್ರತಿಷ್ಠಾಪಿಸಿದರು',
+          'ಮೈಸೂರು ಒಡೆಯರ್ ನಿರ್ಮಿಸಿದರು',
+          'ಬ್ರಿಟಿಷ್ ಸರ್ಕಾರ ನಿರ್ಮಿಸಿತು'
+        ],
+        optsEn: [
+          'Built by Hoige Bazar Koragappa; Shiva Linga consecrated by Sree Narayana Guru',
+          'Built by the Mysuru Royal Family',
+          'Built in 1995 by the State Government'
+        ],
+        ans: 0
+      },
+      {
+        qKn: '೨. ದೇವಾಲಯದ ಪ್ರವೇಶದ್ವಾರದ ಬಳಿ ಇರುವ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಅಮೃತಶಿಲಾ ಪ್ರತಿಮೆಯನ್ನು ಯಾವ ವರ್ಷ ಸ್ಥಾಪಿಸಲಾಯಿತು?',
+        qEn: '2. In which year was the marble statue of Sree Narayana Guru installed near the entrance?',
+        optsKn: ['1966', '1912', '1991'],
+        optsEn: ['1966', '1912', '1991'],
+        ans: 0
+      },
+      {
+        qKn: '೩. ಕುಡ್ರೋಳಿ ಕ್ಷೇತ್ರದಲ್ಲಿ ಶಾರದಾ ಮಾತೆ, ಮಹಾಗಣಪತಿ ಮತ್ತು ಒಂಬತ್ತು ನವದುರ್ಗೆಯರ ಪ್ರತಿಷ್ಠಾಪನೆ ಯಾವ ವರ್ಷದಿಂದ ಆರಂಭವಾಯಿತು?',
+        qEn: '3. Since which year has Kudroli installed Sharada Mathe, Mahaganapati, and all nine Navadurgas?',
+        optsKn: ['1991', '1995', '1966'],
+        optsEn: ['1991', '1995', '1966'],
+        ans: 0
+      },
+      {
+        qKn: '೪. ಸಾಂಪ್ರದಾಯಿಕ ಪಟ್ಟಿಯಲ್ಲಿ 7ನೇ ನವದುರ್ಗೆಯನ್ನು ಕಾಲರಾತ್ರಿ ಎಂದು ಕರೆದರೆ, ಕುಡ್ರೋಳಿಯಲ್ಲಿ 7ನೇ ಸ್ವರೂಪವನ್ನು ಏನೆಂದು ಕರೆಯಲಾಗುತ್ತದೆ?',
+        qEn: '4. While traditional lists name Kalaratri as the 7th Navadurga, what does Kudroli name the 7th form?',
+        optsKn: ['ಮಹಾಕಾಳಿ (Mahakali)', 'ಸಿದ್ಧಿದಾತ್ರಿ (Siddhidatri)', 'ಚಂದ್ರಘಂಟಾ (Chandraghanta)'],
+        optsEn: ['Mahakali', 'Siddhidatri', 'Chandraghanta'],
+        ans: 0
+      },
+      {
+        qKn: '೫. ಮಂಗಳೂರು ದಸರಾ ಶೋಭಾಯಾತ್ರೆಯಲ್ಲಿ ಸ್ತಬ್ಧಚಿತ್ರಗಳು (Tableaux) ಯಾವ ವರ್ಷ ಸೇರ್ಪಡೆಗೊಂಡವು?',
+        qEn: '5. In which year did illuminated tableaux join the Mangaluru Dasara grand procession?',
+        optsKn: ['1995 (ಕಳೆದ ವರ್ಷ 60+ ಸ್ತಬ್ಧಚಿತ್ರಗಳಿದ್ದವು)', '1912', '1966'],
+        optsEn: ['1995 (with 60+ tableaux last year)', '1912', '1966'],
+        ans: 0
+      },
+      {
+        qKn: '೬. ಮಂಗಳೂರು ದಸರಾವನ್ನು "ಜನಸಾಮಾನ್ಯರ ದಸರಾ" (The Common Man’s Dasara) ಎಂದು ಏಕೆ ಕರೆಯುತ್ತಾರೆ?',
+        qEn: '6. Why is Mangaluru Dasara called "the common man’s Dasara"?',
+        optsKn: [
+          'ಇದು ರಾಜಮನೆತನ ಅಥವಾ ಸರ್ಕಾರದ ಅನುದಾನವಿಲ್ಲದೆ ಜನರೇ ಸೇರಿ ಆಚರಿಸುವ ನಾಡಹಬ್ಬ',
+          'ಇದು ಕೇವಲ ಒಂದು ದಿನ ಮಾತ್ರ ನಡೆಯುತ್ತದೆ',
+          'ಇಲ್ಲಿ ದೀಪಾಲಂಕಾರ ಇರುವುದಿಲ್ಲ'
+        ],
+        optsEn: [
+          'It is celebrated without royal or government funding as a people’s festival (Naada Habba)',
+          'It only lasts for two hours',
+          'It has no procession'
+        ],
+        ans: 0
+      },
+      {
+        qKn: '೭. 2026ರ ವೇಳಾಪಟ್ಟಿಯಂತೆ ನವರಾತ್ರಿ ಮೊದಲ ದಿನ (ಅಕ್ಟೋಬರ್ 11) ಮತ್ತು ಮಹಾನವಮಿ (ಅಕ್ಟೋಬರ್ 19) ದಿನದ ಶಾರದಾ ಮಾತೆಯ ಸೀರೆ ಬಣ್ಣಗಳೇನು?',
+        qEn: '7. According to the 2026 schedule, what are the Alankara colours for Day 1 (Sun 11 Oct) and Day 9 (Mon 19 Oct)?',
+        optsKn: [
+          'ದಿನ 1: ಕೆಂಪು (Red), ದಿನ 9: ನವಿಲು ಹಸಿರು (Peacock Green)',
+          'ದಿನ 1: ಬೂದು (Grey), ದಿನ 9: ಕ್ರೀಮ್ (Cream)',
+          'ದಿನ 1: ನೇರಳೆ (Purple), ದಿನ 9: ಹಳದಿ (Yellow)'
+        ],
+        optsEn: [
+          'Day 1: Red, Day 9: Peacock Green (Mahanavami & Ayudha Puja)',
+          'Day 1: Grey, Day 9: Cream',
+          'Day 1: Purple, Day 9: Yellow'
+        ],
+        ans: 0
+      },
+      {
+        qKn: '೮. ವಿಜಯದಶಮಿ ಬೃಹತ್ ಶೋಭಾಯಾತ್ರೆ ಯಾವಾಗ ಆರಂಭವಾಗಿ ಯಾವಾಗ ದೇವಾಲಯದ ಪುಷ್ಕರಿಣಿಗೆ ಮರಳುತ್ತದೆ?',
+        qEn: '8. When does the Vijayadashami Grand Procession start and return to the temple pond for immersion?',
+        optsKn: [
+          'ಸಂಜೆ 4–4:30ಕ್ಕೆ ಪ್ರಾರಂಭವಾಗಿ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ 5 ಗಂಟೆಯ ಸುಮಾರಿಗೆ ಪುಷ್ಕರಿಣಿಗೆ ಮರಳುತ್ತದೆ',
+          'ಬೆಳಿಗ್ಗೆ 8 ಗಂಟೆಗೆ ಪ್ರಾರಂಭವಾಗಿ ಮಧ್ಯಾಹ್ನ ಮುಗಿಯುತ್ತದೆ',
+          'ಮಧ್ಯರಾತ್ರಿ 12 ಗಂಟೆಗೆ ಪ್ರಾರಂಭವಾಗಿ 1 ಗಂಟೆಗೆ ಮುಗಿಯುತ್ತದೆ'
+        ],
+        optsEn: [
+          'Starts around 4–4:30 PM, travels all night through the city, and returns around 5 AM for pond immersion',
+          'Starts at 8 AM and ends at noon',
+          'Runs only inside the hall for 30 minutes'
+        ],
+        ans: 0
+      }
+    ];
+
+    const HOTSPOTS_3D = [
+      {
+        id: 'hs-gopuram',
+        pos: [0, 17, 16],
+        labelKn: 'ಸ್ವರ್ಣ ರಾಜಗೋಪುರ (4 ತಮಿಳು ಶೈಲಿ ಗೋಪುರಗಳು)',
+        labelEn: 'Golden Gopuram (4 Tamil-style Gopurams)',
+        bodyKn: 'ಪುರಾಣ ಮತ್ತು ಮಹಾಕಾವ್ಯಗಳ ಕಲಾಕೃತಿಗಳಿಂದ ಅಲಂಕೃತವಾದ ನಾಲ್ಕು ತಮಿಳು ಶೈಲಿಯ ಗೋಪುರಗಳು ಸಾವಿರಾರು ಎಲ್ಇಡಿ ದೀಪಗಳಿಂದ ಕಂಗೊಳಿಸುತ್ತಿವೆ.',
+        bodyEn: 'The complex features four Tamil-style gopurams decorated with murals from mythology and epics, draped in glowing festival serial lights.',
+        metaKn: '7 ಅಂತಸ್ತುಗಳು · ಸ್ವರ್ಣ ಕಳಶಗಳು',
+        metaEn: '7 Tiers · Golden Kalashas'
+      },
+      {
+        id: 'hs-guru',
+        pos: [-6.5, 3.8, 19],
+        labelKn: 'ಶ್ರೀ ನಾರಾಯಣ Guru ಪ್ರತಿಮೆ (1966)',
+        labelEn: 'Sree Narayana Guru Statue (1966)',
+        bodyKn: '1912ರಲ್ಲಿ ಶಿವಲಿಂಗ ಪ್ರತಿಷ್ಠಾಪಿಸಿದ ಮಹಾನ್ ಸಮಾಜ ಸುಧಾರಕ ಶ್ರೀ ನಾರಾಯಣ ಗುರುಗಳ ಅಮೃತಶಿಲಾ ಪ್ರತಿಮೆಯನ್ನು 1966ರಲ್ಲಿ ಪ್ರವೇಶದ್ವಾರದ ಬಳಿ ಸ್ಥಾಪಿಸಲಾಯಿತು.',
+        bodyEn: 'A marble statue of social reformer Sree Narayana Guru stands near the entrance (installed in 1966), honouring his 1912 consecration of the Shiva Linga.',
+        metaKn: 'ಸ್ಥಾಪನೆ: 1966 · ಅಮೃತಶಿಲಾ ಮಂಟಪ',
+        metaEn: 'Installed: 1966 · Entrance Pavilion'
+      },
+      {
+        id: 'hs-footwear',
+        pos: [8.5, 2.5, 21],
+        labelKn: 'ಪಾದರಕ್ಷೆ ಕೌಂಟರ್ · Footwear Counter',
+        labelEn: 'Footwear Counter Etiquette',
+        bodyKn: 'ಭಕ್ತರು ದೇವಾಲಯದ ಒಳಗೆ ಹಸಿರು ಹಾಸಿನ ಮೇಲೆ ಕಾಲಿಡುವ ಮುನ್ನ ಇಲ್ಲಿ ಪಾದರಕ್ಷೆಗಳನ್ನು ಬಿಟ್ಟು ಶುದ್ಧರಾಗಿ ಪ್ರವೇಶಿಸುತ್ತಾರೆ.',
+        bodyEn: 'Visitors respectfully deposit their shoes at the footwear counter before walking along the green carpet into the sacred complex.',
+        metaKn: 'ದೇವಾಲಯದ ಶಿಷ್ಟಾಚಾರ · Temple Etiquette',
+        metaEn: 'Mandatory Visitor Etiquette'
+      },
+      {
+        id: 'hs-pond',
+        pos: [-22, 4.5, 2],
+        labelKn: 'ಪುಷ್ಕರಿಣಿ ಮತ್ತು ಕೈಲಾಸ ಪರ್ವತ',
+        labelEn: 'Pushkarini Pond & Mount Kailasa',
+        bodyKn: 'ಕೊಳದ ನಾಲ್ಕು ಮೂಲೆಗಳಲ್ಲಿ ಶಿವನ ಪ್ರತಿಮೆಗಳು, ಕಾರಂಜಿಗಳು ಹಾಗೂ ನೀರಿನಲ್ಲಿ ಪ್ರತಿಬಿಂಬಿತವಾಗುವ ಶ್ವೇತ ಕೈಲಾಸ ಪರ್ವತ ಮತ್ತು ನಂದಿ.',
+        bodyEn: 'Features fountains, a statue of Lord Shiva at each of its four corners, and a sculpted white Mount Kailasa range and Nandi reflected in the water.',
+        metaKn: 'ವಿಜಯದಶಮಿಯ ಜಲಸ್ತಂಭನ ತಾಣ (ಬೆಳಿಗ್ಗೆ ~5 AM)',
+        metaEn: 'Site of Vijayadashami Immersion (~5 AM)'
+      },
+      {
+        id: 'hs-sharada',
+        pos: [0, 7.2, -20],
+        labelKn: 'ಶಾರದಾ ಮಾತೆ (1991 ಪರಂಪರೆ)',
+        labelEn: 'Sharada Mathe (Since 1991)',
+        bodyKn: 'ಬೆಳ್ಳಿಯ ವೀಣೆಯನ್ನು ಹಿಡಿದ ಜ್ಞಾನ ಮತ್ತು ಸಂಗೀತದ ದೇವತೆ ಶಾರದಾ ಮಾತೆ. ದೇಶದ ಅತಿ ದೊಡ್ಡ ಶಾರದಾ ಮೂರ್ತಿಗಳಲ್ಲಿ ಒಂದಾಗಿದೆ.',
+        bodyEn: 'Goddess of knowledge, music, and learning holding an ornate silver veena; one of the largest Sharada idols in the country.',
+        metaKn: 'ದಿನ 1–9 ರೇಷ್ಮೆ ಸೀರೆ ಅಲಂಕಾರ ಬದಲಿಸಿ ನೋಡಿ',
+        metaEn: 'Interactive Day 1–9 Silk Saree Alankara'
+      },
+      {
+        id: 'hs-pratishtha',
+        pos: [25, 4.5, -15],
+        labelKn: 'ಪ್ರತಿಷ್ಠಾಪನಾ ಕಲಶ ಮಂಟಪ',
+        labelEn: 'Pratishthapana Consecration Stage',
+        bodyKn: 'ನವರಾತ್ರಿಯ ಆರಂಭದಲ್ಲಿ ಪವಿತ್ರ ಕಲಶ, ತೆಂಗಿನಕಾಯಿ ಮತ್ತು ದೀಪಗಳೊಂದಿಗೆ ದೇವಾಲಯದ ಅರ್ಚಕರು ಸಂಪ್ರದಾಯದಂತೆ ಪ್ರತಿಷ್ಠಾಪನಾ ವಿಧಿಗಳನ್ನು ನೆರವೇರಿಸುತ್ತಾರೆ.',
+        bodyEn: 'Sacred stage with kalasha, coconut, and lamps where temple priests perform idol consecration at the start of Navaratri as per tradition.',
+        metaKn: 'ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ',
+        metaEn: 'Please verify final timings with the temple'
+      },
+      {
+        id: 'hs-arches',
+        pos: [22, 6.2, 6],
+        labelKn: '೨೦೨೬ ನವರಾತ್ರಿ ೯ ಬಣ್ಣದ ದ್ವಾರಗಳು & ಅನ್ನದಾನ',
+        labelEn: '2026 Nine Alankara Arches & Annadana',
+        bodyKn: 'ಅಕ್ಟೋಬರ್ 11ರಿಂದ 19ರವರೆಗಿನ 9 ದಿನಗಳ ಸೀರೆ ಬಣ್ಣಗಳನ್ನು ಪ್ರತಿನಿಧಿಸುವ ದ್ವಾರಗಳು. ಪ್ರತಿದಿನ ಪೂಜೆ, ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮ ಮತ್ತು ಅನ್ನದಾನ ನಡೆಯುತ್ತದೆ.',
+        bodyEn: 'Nine glowing arches tinted in the 2026 daily alankara colours. Daily pujas, evening cultural programmes, and free Annadana meals take place here.',
+        metaKn: 'ಅಕ್ಟೋಬರ್ 11 – 20, 2026',
+        metaEn: '11 Oct – 20 Oct 2026 Schedule'
+      },
+      {
+        id: 'hs-procession',
+        pos: [0, 6.2, 34],
+        labelKn: 'ವಿಜಯದಶಮಿ ಶೋಭಾಯಾತ್ರೆ ಮತ್ತು ಹುಲಿವೇಷ',
+        labelEn: 'Grand Procession, Tableaux & Pili Vesha',
+        bodyKn: '1995ರಿಂದ ಸ್ತಬ್ಧಚಿತ್ರಗಳು ಸೇರ್ಪಡೆಗೊಂಡವು (ಕಳೆದ ವರ್ಷ 60+ ಸ್ತಬ್ಧಚಿತ್ರಗಳು). ಪಿಲಿ ವೇಷ (ಹುಲಿವೇಷ), ಚೆಂಡೆ, ತಾಸೆ ಮತ್ತು ಯಕ್ಷಗಾನ ಕರಾವಳಿಯ ಹೆಮ್ಮೆ.',
+        bodyEn: 'Tableaux joined in 1995 (60+ last year). Features Pili Vesha tiger dancers, chende drummers, and celebrates Yakshagana as a coastal art form.',
+        metaKn: 'ಮಾರ್ಗ: ಕುಡ್ರೋಳಿ → ಲೇಡಿಹಿಲ್ → ಲಾಲ್ಬಾಗ್ → ಪಿವಿಎಸ್ → ಹಂಪನಕಟ್ಟೆ → ಕಾರ್ ಸ್ಟ್ರೀಟ್ → ಅಳಕೆ → ಕುಡ್ರೋಳಿ',
+        metaEn: 'Route: Kudroli → Mannagudde → Ladyhill → Lalbagh → PVS → Hampankatta → Car Street → Alake → Kudroli'
+      }
+    ];
+
+    /*************************************************************************
+     * 2. APPLICATION STATE
+     *************************************************************************/
+    const state = {
+      lang: 'kn', // 'kn' default or 'en'
+      tourMode: 'guided', // 'guided' or 'free'
+      followKiran: false,
+      currentStopIndex: 0,
+      isPlaying: false,
+      sentenceIndex: 0,
+      isSpeaking: false,
+      lowGfx: false,
+      reducedMotion: false,
+      selectedAlankaraDay: 1,
+      selectedDeityId: 'ganapati',
+      floatMoving: true,
+      quizAnswers: {},
+      drawerTimeout: null
+    };
+
+    /*************************************************************************
+     * 3. PROCEDURAL WEB AUDIO ENGINE + CUSTOM CHENDE FILE LOADER
+     *************************************************************************/
+    class FestivalAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.masterGain = null;
+        this.musicGain = null;
+        this.fxGain = null;
+        this.duckGain = null;
+        this.isStarted = false;
+        this.stopNumber = 1;
+
+        this.masterVol = 0.85;
+        this.musicVol = 0.55;
+        this.fxVol = 0.75;
+        this.voiceVol = 1.0;
+
+        this.customChendeBuffer = null;
+        this.customChendeSource = null;
+        this.loopTimer = null;
+        this.stepCount = 0;
+      }
+
+      init() {
+        if (this.isStarted) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioCtx();
+
+        this.masterGain = this.ctx.createGain();
+        this.duckGain = this.ctx.createGain();
+        this.musicGain = this.ctx.createGain();
+        this.fxGain = this.ctx.createGain();
+
+        this.musicGain.connect(this.duckGain);
+        this.fxGain.connect(this.duckGain);
+        this.duckGain.connect(this.masterGain);
+        this.masterGain.connect(this.ctx.destination);
+
+        this.updateVolumes();
+        this.startContinuousDrone();
+        this.startRhythmScheduler();
+        this.isStarted = true;
+      }
+
+      updateVolumes() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        this.masterGain.gain.setTargetAtTime(this.masterVol, now, 0.05);
+        this.musicGain.gain.setTargetAtTime(this.musicVol, now, 0.05);
+        this.fxGain.gain.setTargetAtTime(this.fxVol, now, 0.05);
+      }
+
+      setDucking(isSpeaking) {
+        if (!this.ctx || !this.duckGain) return;
+        const target = isSpeaking ? 0.28 : 1.0;
+        this.duckGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.18);
+      }
+
+      startContinuousDrone() {
+        // Calm Sa-Pa tambura drone (C3 = 130.81 Hz, G3 = 196.00 Hz)
+        const freqs = [130.81, 196.0, 261.63];
+        freqs.forEach((f, idx) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = idx === 2 ? 'sine' : 'triangle';
+          osc.frequency.value = f;
+          g.gain.value = idx === 2 ? 0.03 : 0.055;
+          osc.connect(g);
+          g.connect(this.musicGain);
+          osc.start();
+        });
+      }
+
+      playVeenaPluck(freq) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.008, now + 0.25);
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, now);
+        filter.frequency.exponentialRampToValueAtTime(320, now + 1.4);
+
+        g.gain.setValueAtTime(0.14, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+        osc.connect(filter);
+        filter.connect(g);
+        g.connect(this.musicGain);
+        osc.start(now);
+        osc.stop(now + 1.55);
+      }
+
+      playTempleBell() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const partials = [1046.5, 1567.98, 2489.0, 3135.96];
+        partials.forEach((p, idx) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = p;
+          g.gain.setValueAtTime(0.08 / (idx + 1), now);
+          g.gain.exponentialRampToValueAtTime(0.0008, now + 2.2 / (idx + 0.7));
+          osc.connect(g);
+          g.connect(this.fxGain);
+          osc.start(now);
+          osc.stop(now + 2.3);
+        });
+      }
+
+      playConchShell() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(370, now);
+        osc.frequency.linearRampToValueAtTime(392, now + 0.6);
+        osc.frequency.linearRampToValueAtTime(385, now + 2.2);
+
+        const bp = this.ctx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 780;
+        bp.Q.value = 4.0;
+
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.linearRampToValueAtTime(0.18, now + 0.45);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 2.4);
+
+        osc.connect(bp);
+        bp.connect(g);
+        g.connect(this.fxGain);
+        osc.start(now);
+        osc.stop(now + 2.5);
+      }
+
+      playChendeStroke(intensity = 1.0, isTase = false) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // High-tension coastal Chende drum transient + body
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = isTase ? 'square' : 'triangle';
+        const startFreq = isTase ? 420 : 250;
+        const endFreq = isTase ? 190 : 115;
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.09);
+
+        g.gain.setValueAtTime(0.28 * intensity, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(g);
+        g.connect(this.fxGain);
+        osc.start(now);
+        osc.stop(now + 0.13);
+
+        // Snappy stick noise burst
+        const bufferSize = this.ctx.sampleRate * 0.05;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        }
+        const whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = isTase ? 1800 : 950;
+
+        const ng = this.ctx.createGain();
+        ng.gain.setValueAtTime(0.22 * intensity, now);
+        ng.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+        whiteNoise.connect(filter);
+        filter.connect(ng);
+        ng.connect(this.fxGain);
+        whiteNoise.start(now);
+      }
+
+      setStopSoundscape(stopNum) {
+        this.stopNumber = stopNum;
+        if (!this.ctx) return;
+        if (stopNum === 9) {
+          this.playConchShell();
+        }
+        this.manageCustomChendePlayback();
+      }
+
+      manageCustomChendePlayback() {
+        if (!this.ctx) return;
+        if (this.customChendeSource) {
+          try { this.customChendeSource.stop(); } catch (e) {}
+          this.customChendeSource = null;
+        }
+        if (this.customChendeBuffer && this.stopNumber >= 8) {
+          const src = this.ctx.createBufferSource();
+          src.buffer = this.customChendeBuffer;
+          src.loop = true;
+          const g = this.ctx.createGain();
+          g.gain.value = this.stopNumber === 9 ? 0.9 : 0.35;
+          src.connect(g);
+          g.connect(this.fxGain);
+          src.start();
+          this.customChendeSource = src;
+        }
+      }
+
+      async loadCustomChendeFile(file) {
+        if (!this.ctx) this.init();
+        const arrayBuf = await file.arrayBuffer();
+        this.customChendeBuffer = await this.ctx.decodeAudioData(arrayBuf);
+        this.manageCustomChendePlayback();
+      }
+
+      startRhythmScheduler() {
+        // Hamsadhwani / Mohanam pentatonic notes for calm temple veena
+        const scale = [261.63, 293.66, 329.63, 392.00, 493.88, 523.25];
+        this.loopTimer = setInterval(() => {
+          if (!this.isStarted || !this.ctx) return;
+          this.stepCount = (this.stepCount + 1) % 16;
+
+          // Stops 1 to 7: Calm temple ambience (Sa-Pa drone, gentle veena plucks, temple bells; NO chende)
+          if (this.stopNumber <= 7) {
+            if (this.stepCount % 4 === 0) {
+              const note = scale[Math.floor(Math.random() * scale.length)];
+              this.playVeenaPluck(note);
+            }
+            if (this.stepCount === 0 || (this.stopNumber === 4 && this.stepCount === 8)) {
+              this.playTempleBell();
+            }
+          }
+          // Stop 8: Soft chende drum warm-up
+          else if (this.stopNumber === 8 && !this.customChendeBuffer) {
+            if (this.stepCount % 2 === 0) {
+              this.playChendeStroke(0.35, false);
+            }
+            if (this.stepCount === 14) {
+              this.playChendeStroke(0.45, true);
+            }
+          }
+          // Stop 9: Loud, energetic Pili Vesha chende and tase percussion rhythm + conch
+          else if (this.stopNumber === 9 && !this.customChendeBuffer) {
+            const pattern = [1, 0.6, 0.9, 0.5, 1, 0.7, 0.85, 0.95];
+            const hit = pattern[this.stepCount % pattern.length];
+            this.playChendeStroke(hit, this.stepCount % 3 === 0);
+            if (this.stepCount === 0 && Math.random() < 0.35) {
+              this.playConchShell();
+            }
+          }
+          // Stop 10: Gentle festive finale percussion + veena
+          else if (this.stopNumber === 10 && !this.customChendeBuffer) {
+            if (this.stepCount % 2 === 0) {
+              this.playChendeStroke(0.42, this.stepCount % 4 === 0);
+            }
+            if (this.stepCount % 4 === 0) {
+              const note = scale[Math.floor(Math.random() * scale.length)];
+              this.playVeenaPluck(note);
+            }
+          }
+        }, 190);
+      }
+    }
+
+    const audioEngine = new FestivalAudioEngine();
+
+    /*************************************************************************
+     * 4. THREE.JS 3D SCENE, BLOOM COMPOSER & ARCHITECTURAL ZONES
+     *************************************************************************/
+    const container = document.getElementById('webgl-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x06040d);
+    scene.fog = new THREE.FogExp2(0x080512, 0.0065);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.5, 350);
+    camera.position.set(0, 38, 68);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI * 0.485;
+    controls.minDistance = 4;
+    controls.maxDistance = 135;
+    controls.target.set(0, 6, 0);
+
+    // Post-processing with UnrealBloomPass
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.85, // strength
+      0.45, // radius
+      0.72  // threshold
+    );
+    composer.addPass(bloomPass);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffeedd, 0.72);
+    scene.add(ambientLight);
+
+    const warmSunLight = new THREE.DirectionalLight(0xffc978, 1.35);
+    warmSunLight.position.set(30, 55, 40);
+    scene.add(warmSunLight);
+
+    const darbarPointLight = new THREE.PointLight(0xffaa33, 2.5, 45);
+    darbarPointLight.position.set(0, 10, -16);
+    scene.add(darbarPointLight);
+
+    const pondCyanLight = new THREE.PointLight(0x22d3ee, 2.2, 40);
+    pondCyanLight.position.set(-22, 6, 2);
+    scene.add(pondCyanLight);
+
+    const pondMagentaLight = new THREE.PointLight(0xe879f9, 1.8, 35);
+    pondMagentaLight.position.set(-28, 10, -8);
+    scene.add(pondMagentaLight);
+
+    // Clickable meshes registry for Raycaster
+    const clickableMeshes = [];
+
+    // Shared Materials
+    const goldMat = new THREE.MeshStandardMaterial({
+      color: 0xf6c453,
+      metalness: 0.75,
+      roughness: 0.25,
+      emissive: 0x553800,
+      emissiveIntensity: 0.35
+    });
+
+    const marbleFloorMat = new THREE.MeshStandardMaterial({
+      color: 0x1a1625,
+      metalness: 0.45,
+      roughness: 0.15
+    });
+
+    const whiteMarbleMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      roughness: 0.28,
+      metalness: 0.1
+    });
+
+    // Ground & Green Carpet Walkway
+    const groundGeo = new THREE.PlaneGeometry(240, 240);
+    const groundMesh = new THREE.Mesh(groundGeo, marbleFloorMat);
+    groundMesh.rotation.x = -Math.PI / 2;
+    scene.add(groundMesh);
+
+    const carpetGeo = new THREE.PlaneGeometry(4.6, 48);
+    const carpetMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
+    const carpetMesh = new THREE.Mesh(carpetGeo, carpetMat);
+    carpetMesh.rotation.x = -Math.PI / 2;
+    carpetMesh.position.set(0, 0.03, 5);
+    scene.add(carpetMesh);
+
+    /*************************************************************************
+     * 5. BUILD TEMPLE ZONES, GOPURAMS, PUSHKARINI, DARBAR & PROCESSION
+     *************************************************************************/
+    // Helper function to create Tamil-style tiered Gopuram
+    function createGopuram(x, z, tiers = 7, scale = 1.0, rotY = 0, tintEmissive = 0x553000) {
+      const group = new THREE.Group();
+      group.position.set(x, 0, z);
+      group.rotation.y = rotY;
+
+      const baseMat = new THREE.MeshStandardMaterial({
+        color: 0xeab308,
+        roughness: 0.35,
+        metalness: 0.55,
+        emissive: tintEmissive,
+        emissiveIntensity: 0.4
+      });
+
+      // Gateway base with walkthrough arch
+      const pillarLeft = new THREE.Mesh(new THREE.BoxGeometry(3.5 * scale, 4.5 * scale, 3.2 * scale), baseMat);
+      pillarLeft.position.set(-3.2 * scale, 2.25 * scale, 0);
+      group.add(pillarLeft);
+
+      const pillarRight = new THREE.Mesh(new THREE.BoxGeometry(3.5 * scale, 4.5 * scale, 3.2 * scale), baseMat);
+      pillarRight.position.set(3.2 * scale, 2.25 * scale, 0);
+      group.add(pillarRight);
+
+      let currentY = 4.5 * scale;
+      for (let t = 0; t < tiers; t++) {
+        const ratio = 1 - t * 0.1;
+        const w = 10.5 * scale * ratio;
+        const h = 2.0 * scale;
+        const d = 3.6 * scale * ratio;
+        const tierMesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), baseMat);
+        tierMesh.position.y = currentY + h / 2;
+        group.add(tierMesh);
+        currentY += h;
+      }
+
+      // Golden Kalashas on top ridge
+      const kalashaCount = 5;
+      for (let k = 0; k < kalashaCount; k++) {
+        const kx = (k - (kalashaCount - 1) / 2) * 0.9 * scale;
+        const kalasha = new THREE.Mesh(
+          new THREE.ConeGeometry(0.28 * scale, 0.95 * scale, 12),
+          new THREE.MeshBasicMaterial({ color: 0xffe875 })
+        );
+        kalasha.position.set(kx, currentY + 0.5 * scale, 0);
+        group.add(kalasha);
+      }
+
+      scene.add(group);
+      return { group, topY: currentY };
+    }
+
+    // 4 Tamil-style Gopurams (Main Front 7-tiered + 3 directional Gopurams)
+    const mainGopuram = createGopuram(0, 16, 7, 1.05, 0, 0x6b3e00);
+    createGopuram(0, -32, 5, 0.85, 0, 0x4a2c00);
+    createGopuram(-30, -8, 5, 0.8, Math.PI / 2, 0x0e7490); // Cyan-tinted near pond
+    createGopuram(30, -8, 5, 0.8, -Math.PI / 2, 0x86198f); // Magenta-tinted
+
+    // Sree Narayana Guru Marble Statue (1966) near entrance + Footwear Counter
+    function createEntranceLandmarks() {
+      // Guru Statue Mantapa (-6.5, 0, 19)
+      const guruGroup = new THREE.Group();
+      guruGroup.position.set(-6.5, 0, 19);
+      const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.6, 1.5, 16), goldMat);
+      pedestal.position.y = 0.75;
+      guruGroup.add(pedestal);
+
+      // Seated white marble statue of Sree Narayana Guru
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.75, 1.4, 16), whiteMarbleMat);
+      body.position.y = 2.1;
+      guruGroup.add(body);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 16), whiteMarbleMat);
+      head.position.y = 3.05;
+      guruGroup.add(head);
+
+      // Golden canopy
+      const canopy = new THREE.Mesh(new THREE.ConeGeometry(2.1, 1.2, 8), goldMat);
+      canopy.position.y = 4.6;
+      guruGroup.add(canopy);
+      scene.add(guruGroup);
+
+      // Footwear Counter (8.5, 0, 21)
+      const fwGroup = new THREE.Group();
+      fwGroup.position.set(8.5, 0, 21);
+      const booth = new THREE.Mesh(
+        new THREE.BoxGeometry(3.6, 2.2, 2.0),
+        new THREE.MeshStandardMaterial({ color: 0x3b2314, roughness: 0.7 })
+      );
+      booth.position.y = 1.1;
+      fwGroup.add(booth);
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.35, 2.4), goldMat);
+      roof.position.y = 2.35;
+      fwGroup.add(roof);
+      scene.add(fwGroup);
+    }
+    createEntranceLandmarks();
+
+    // Stop 3: Temple Pond (Pushkarini), 4 Corner Shiva Statues, White Mount Kailasa & Nandi, & 5 Timeline Pillars
+    const fountainsParticles = [];
+    function createPushkariniAndTimeline() {
+      const pondGroup = new THREE.Group();
+      pondGroup.position.set(-22, 0, 2);
+
+      // Mirror water surface
+      const waterGeo = new THREE.PlaneGeometry(16, 16);
+      const waterMat = new THREE.MeshStandardMaterial({
+        color: 0x083344,
+        metalness: 0.92,
+        roughness: 0.06,
+        emissive: 0x06283d,
+        emissiveIntensity: 0.4
+      });
+      const waterMesh = new THREE.Mesh(waterGeo, waterMat);
+      waterMesh.rotation.x = -Math.PI / 2;
+      waterMesh.position.y = 0.08;
+      pondGroup.add(waterMesh);
+
+      // Stepped border
+      const borderMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0x422006 });
+      const bNorth = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.6, 0.6), borderMat);
+      bNorth.position.set(0, 0.3, -8.1);
+      const bSouth = bNorth.clone();
+      bSouth.position.set(0, 0.3, 8.1);
+      const bEast = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 16.8), borderMat);
+      bEast.position.set(8.1, 0.3, 0);
+      const bWest = bEast.clone();
+      bWest.position.set(-8.1, 0.3, 0);
+      pondGroup.add(bNorth, bSouth, bEast, bWest);
+
+      // 4 Corner Statues of Lord Shiva
+      const corners = [[-7.5, -7.5], [7.5, -7.5], [-7.5, 7.5], [7.5, 7.5]];
+      corners.forEach(([cx, cz]) => {
+        const shivaGroup = new THREE.Group();
+        shivaGroup.position.set(cx, 0.5, cz);
+        const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 1.0, 12), goldMat);
+        ped.position.y = 0.5;
+        const torso = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.35, 0.45, 1.4, 12),
+          new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.45 })
+        );
+        torso.position.y = 1.7;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), torso.material);
+        head.position.y = 2.6;
+        shivaGroup.add(ped, torso, head);
+        pondGroup.add(shivaGroup);
+      });
+
+      // Sculpted White Mount Kailasa Range & Nandi on the backdrop edge
+      const kailasaGroup = new THREE.Group();
+      kailasaGroup.position.set(0, 0.2, -6.2);
+      const peaks = [
+        [0, 4.8, 2.6],
+        [-2.4, 3.5, 2.0],
+        [2.4, 3.7, 2.0],
+        [-4.2, 2.6, 1.6],
+        [4.2, 2.7, 1.6]
+      ];
+      peaks.forEach(([px, ph, pr]) => {
+        const cone = new THREE.Mesh(new THREE.ConeGeometry(pr, ph, 7), whiteMarbleMat);
+        cone.position.set(px, ph / 2, 0);
+        kailasaGroup.add(cone);
+      });
+      // Nandi bull in front of Kailasa
+      const nandiBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.7, 1.6), whiteMarbleMat);
+      nandiBody.position.set(0, 0.6, 2.2);
+      const nandiHead = new THREE.Mesh(new THREE.SphereGeometry(0.38, 12, 12), whiteMarbleMat);
+      nandiHead.position.set(0, 1.05, 2.9);
+      kailasaGroup.add(nandiBody, nandiHead);
+      pondGroup.add(kailasaGroup);
+
+      // Fountain jets
+      const fGeo = new THREE.CylinderGeometry(0.08, 0.35, 2.6, 8);
+      const fMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.7 });
+      [[-3.2, 2.2], [3.2, 2.2]].forEach(([fx, fz]) => {
+        const fMesh = new THREE.Mesh(fGeo, fMat);
+        fMesh.position.set(fx, 1.3, fz);
+        pondGroup.add(fMesh);
+        fountainsParticles.push(fMesh);
+      });
+
+      scene.add(pondGroup);
+
+      // 5 Interactive Historical Timeline Pillars (1912 -> 1966 -> 1991 -> 1995 -> 2026)
+      TIMELINE_EVENTS.forEach((ev, idx) => {
+        const pGroup = new THREE.Group();
+        const px = -12;
+        const pz = -5 + idx * 3.6;
+        pGroup.position.set(px, 0, pz);
+
+        const col = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.42, 0.5, 2.8, 16),
+          new THREE.MeshStandardMaterial({
+            color: 0xfacc15,
+            emissive: 0xb45309,
+            emissiveIntensity: 0.6,
+            metalness: 0.5,
+            roughness: 0.3
+          })
+        );
+        col.position.y = 1.4;
+        col.userData = {
+          type: 'timeline',
+          event: ev
+        };
+        clickableMeshes.push(col);
+
+        const orb = new THREE.Mesh(
+          new THREE.SphereGeometry(0.38, 16, 16),
+          new THREE.MeshBasicMaterial({ color: 0xffe875 })
+        );
+        orb.position.y = 3.1;
+        orb.userData = col.userData;
+        clickableMeshes.push(orb);
+
+        pGroup.add(col, orb);
+        scene.add(pGroup);
+      });
+    }
+    createPushkariniAndTimeline();
+
+    /*************************************************************************
+     * 6. STOP 4 & 5: SHARADA MATHE DARBAR & SEMICIRCULAR NAVADURGA GALLERY
+     *************************************************************************/
+    let sharadaSareeMat, sharadaBlouseMat, sharadaGarlandMat, aartiFlameMesh;
+    const deityPositionMap = {};
+
+    function createDarbarAndNavadurgas() {
+      const darbarGroup = new THREE.Group();
+      darbarGroup.position.set(0, 0, -20);
+
+      // Raised Darbar Stage & Carved Golden Backdrop
+      const stage = new THREE.Mesh(new THREE.CylinderGeometry(14, 14.8, 1.2, 36), goldMat);
+      stage.position.y = 0.6;
+      darbarGroup.add(stage);
+
+      const backdrop = new THREE.Mesh(
+        new THREE.BoxGeometry(10, 9.5, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0xb45309, metalness: 0.7, roughness: 0.3, emissive: 0x451a03 })
+      );
+      backdrop.position.set(0, 5.2, -3.2);
+      darbarGroup.add(backdrop);
+
+      // Hanging Golden Bells
+      for (let b = -4; b <= 4; b += 2) {
+        const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.2), goldMat);
+        cord.position.set(b * 1.1, 8.8, 1.5);
+        const bell = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.6, 12), goldMat);
+        bell.position.set(b * 1.1, 7.6, 1.5);
+        darbarGroup.add(cord, bell);
+      }
+
+      // Standing Brass Kaal-Deepa Oil Lamps with flickering wicks
+      [-3.8, 3.8].forEach((lx) => {
+        const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.45, 2.6, 12), goldMat);
+        stand.position.set(lx, 2.5, 2.5);
+        const wick = new THREE.Mesh(
+          new THREE.SphereGeometry(0.22, 10, 10),
+          new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+        );
+        wick.position.set(lx, 3.9, 2.5);
+        darbarGroup.add(stand, wick);
+      });
+
+      // Circular Flower Rangoli on floor in front of stage
+      const rangoliRadii = [3.2, 2.4, 1.6, 0.8];
+      const rangoliCols = [0xdc2626, 0xfacc15, 0xf97316, 0xffffff];
+      rangoliRadii.forEach((r, idx) => {
+        const ring = new THREE.Mesh(
+          new THREE.CylinderGeometry(r, r, 0.06, 24),
+          new THREE.MeshBasicMaterial({ color: rangoliCols[idx] })
+        );
+        ring.position.set(0, 1.24 + idx * 0.02, 4.2);
+        darbarGroup.add(ring);
+      });
+
+      // Circling Aarti Flame
+      aartiFlameMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.24, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xffdd44 })
+      );
+      aartiFlameMesh.position.set(0, 4.5, 2.2);
+      darbarGroup.add(aartiFlameMesh);
+
+      // SHARADA MATHE IDOL (Centerpiece holding Ornate Silver Veena)
+      const sharadaGroup = new THREE.Group();
+      sharadaGroup.position.set(0, 1.2, 0);
+
+      // Lotus Peetha
+      const lotusBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.7, 1.3, 0.9, 20),
+        new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.4 })
+      );
+      lotusBase.position.y = 0.45;
+      sharadaGroup.add(lotusBase);
+
+      // Dynamic Silk Saree (Day 1 Red default)
+      sharadaSareeMat = new THREE.MeshStandardMaterial({
+        color: ALANKARA_2026[0].hex,
+        roughness: 0.3,
+        metalness: 0.25,
+        emissive: ALANKARA_2026[0].hex,
+        emissiveIntensity: 0.22
+      });
+      const sareeDrape = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 1.25, 2.5, 20), sharadaSareeMat);
+      sareeDrape.position.y = 2.1;
+      sharadaGroup.add(sareeDrape);
+
+      // Dynamic Blouse
+      sharadaBlouseMat = new THREE.MeshStandardMaterial({
+        color: ALANKARA_2026[0].blouseHex,
+        roughness: 0.35,
+        metalness: 0.2
+      });
+      const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.65, 1.1, 16), sharadaBlouseMat);
+      torso.position.y = 3.6;
+      sharadaGroup.add(torso);
+
+      // Dynamic Flower Garland
+      sharadaGarlandMat = new THREE.MeshBasicMaterial({ color: ALANKARA_2026[0].garlandHex });
+      const garland = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.13, 12, 24), sharadaGarlandMat);
+      garland.rotation.x = Math.PI / 2.4;
+      garland.position.set(0, 3.55, 0.22);
+      sharadaGroup.add(garland);
+
+      // Serene Face & Golden Crown
+      const face = new THREE.Mesh(
+        new THREE.SphereGeometry(0.52, 20, 20),
+        new THREE.MeshStandardMaterial({ color: 0xffdba4, roughness: 0.4 })
+      );
+      face.position.y = 4.55;
+      const crown = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.35, 16), goldMat);
+      crown.position.y = 5.45;
+      const halo = new THREE.Mesh(
+        new THREE.RingGeometry(0.75, 1.05, 24),
+        new THREE.MeshBasicMaterial({ color: 0xffe17d, side: THREE.DoubleSide })
+      );
+      halo.position.set(0, 4.7, -0.35);
+      sharadaGroup.add(face, crown, halo);
+
+      // Ornate Silver Veena held across front
+      const silverMat = new THREE.MeshStandardMaterial({
+        color: 0xe2e8f0,
+        metalness: 0.9,
+        roughness: 0.15,
+        emissive: 0x334155,
+        emissiveIntensity: 0.3
+      });
+      const veenaNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 2.8, 12), silverMat);
+      veenaNeck.rotation.z = Math.PI / 3.2;
+      veenaNeck.position.set(0, 3.3, 0.72);
+      const gourd1 = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 16), silverMat);
+      gourd1.position.set(-0.85, 2.75, 0.75);
+      const gourd2 = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), silverMat);
+      gourd2.position.set(0.85, 3.85, 0.75);
+      sharadaGroup.add(veenaNeck, gourd1, gourd2);
+
+      darbarGroup.add(sharadaGroup);
+
+      // SEMICIRCULAR GOLDEN MANTAPA FOR MAHAGANAPATI + 9 NAVADURGAS (10 Deities around Sharada Mathe)
+      const radius = 10.8;
+      NAVADURGA_LIST.forEach((deity, idx) => {
+        const angle = Math.PI * 0.88 - (idx / (NAVADURGA_LIST.length - 1)) * (Math.PI * 0.76);
+        const dx = Math.cos(angle) * radius;
+        const dz = -Math.sin(angle) * radius + 2.0;
+
+        const dGroup = new THREE.Group();
+        dGroup.position.set(dx, 1.2, dz);
+        dGroup.lookAt(0, 2.2, 6);
+
+        // Mantapa Pedestal & Arch
+        const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.1, 0.9, 16), goldMat);
+        ped.position.y = 0.45;
+        dGroup.add(ped);
+
+        // Deity figure
+        const figureMat = new THREE.MeshStandardMaterial({
+          color: deity.color,
+          roughness: 0.32,
+          metalness: 0.25,
+          emissive: deity.color,
+          emissiveIntensity: 0.25
+        });
+        const bodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.72, 1.9, 16), figureMat);
+        bodyMesh.position.y = 1.85;
+        const headMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(0.36, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0xffd8a8 })
+        );
+        headMesh.position.y = 3.0;
+        const mukuta = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.85, 12), goldMat);
+        mukuta.position.y = 3.6;
+
+        const hitData = { type: 'deity', deity };
+        bodyMesh.userData = hitData;
+        headMesh.userData = hitData;
+        ped.userData = hitData;
+        clickableMeshes.push(bodyMesh, headMesh, ped);
+
+        dGroup.add(bodyMesh, headMesh, mukuta);
+        darbarGroup.add(dGroup);
+
+        // World coordinates for camera & Kiran walk target
+        const worldPos = new THREE.Vector3(dx, 3.2, dz - 20);
+        deityPositionMap[deity.id] = worldPos;
+      });
+
+      scene.add(darbarGroup);
+    }
+    createDarbarAndNavadurgas();
+
+    // Update Sharada Mathe 2026 Saree Alankara Colour in real time
+    function applySharadaAlankara(dayNumber) {
+      state.selectedAlankaraDay = dayNumber;
+      const info = ALANKARA_2026.find((d) => d.day === dayNumber) || ALANKARA_2026[0];
+      if (sharadaSareeMat) {
+        sharadaSareeMat.color.setHex(info.hex);
+        sharadaSareeMat.emissive.setHex(info.hex);
+      }
+      if (sharadaBlouseMat) {
+        sharadaBlouseMat.color.setHex(info.blouseHex);
+      }
+      if (sharadaGarlandMat) {
+        sharadaGarlandMat.color.setHex(info.garlandHex);
+      }
+      document.querySelectorAll('#alankara-buttons-row .swatch-btn').forEach((btn) => {
+        btn.classList.toggle('active', Number(btn.dataset.day) === dayNumber);
+      });
+    }
+
+    /*************************************************************************
+     * 7. STOP 6 (PRATISHTHAPANA), STOP 7 (9 ARCHES) & STOP 9 (PROCESSION)
+     *************************************************************************/
+    let processionFloatGroup;
+    const piliDancers = [];
+
+    function createPratishthapanaAndArches() {
+      // Stop 6: Pratishthapana Consecration Stage (25, 0, -15)
+      const pratGroup = new THREE.Group();
+      pratGroup.position.set(25, 0, -15);
+      const stage = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 5), goldMat);
+      stage.position.y = 0.6;
+      pratGroup.add(stage);
+
+      // Sacred Kalasha + Coconut + Mango Leaves
+      const kalashaPot = new THREE.Mesh(new THREE.SphereGeometry(0.65, 16, 16), goldMat);
+      kalashaPot.position.set(0, 1.8, 0);
+      const coconut = new THREE.Mesh(
+        new THREE.SphereGeometry(0.38, 14, 14),
+        new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 })
+      );
+      coconut.position.set(0, 2.55, 0);
+      pratGroup.add(kalashaPot, coconut);
+
+      // Ceremonial lamps flanking Kalasha
+      [-1.6, 1.6].forEach((lx) => {
+        const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.35, 1.6, 12), goldMat);
+        lamp.position.set(lx, 2.0, 0.8);
+        const flame = new THREE.Mesh(
+          new THREE.SphereGeometry(0.18, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+        );
+        flame.position.set(lx, 2.9, 0.8);
+        pratGroup.add(lamp, flame);
+      });
+      scene.add(pratGroup);
+
+      // Stop 7: 9 Glowing 3D Arches tinted in the 9 Daily Alankara Colours of 2026
+      ALANKARA_2026.forEach((item, idx) => {
+        const archMat = new THREE.MeshStandardMaterial({
+          color: item.hex,
+          emissive: item.hex,
+          emissiveIntensity: 0.65,
+          roughness: 0.25,
+          metalness: 0.4
+        });
+        const archMesh = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.24, 12, 28, Math.PI), archMat);
+        archMesh.position.set(20, 0.2, -3 + idx * 2.3);
+        scene.add(archMesh);
+      });
+    }
+    createPratishthapanaAndArches();
+
+    // Stop 9: Grand Procession Avenue, Moving Sharada Float & Leaping Pili Vesha Tiger Dancers
+    function createGrandProcessionAvenue() {
+      processionFloatGroup = new THREE.Group();
+      processionFloatGroup.position.set(0, 0, 34);
+
+      // Illuminated Float Chariot Base
+      const chassis = new THREE.Mesh(
+        new THREE.BoxGeometry(5.5, 1.4, 8.2),
+        new THREE.MeshStandardMaterial({ color: 0xb45309, emissive: 0x78350f, metalness: 0.6, roughness: 0.3 })
+      );
+      chassis.position.y = 1.0;
+      processionFloatGroup.add(chassis);
+
+      // Canopy & Procession Sharada Idol
+      const canopy = new THREE.Mesh(new THREE.ConeGeometry(3.4, 2.5, 8), goldMat);
+      canopy.position.set(0, 6.2, -0.5);
+      const idolBody = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.6, 0.95, 2.2, 16),
+        new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x7f1d1d })
+      );
+      idolBody.position.set(0, 2.8, -0.5);
+      const idolHead = new THREE.Mesh(
+        new THREE.SphereGeometry(0.42, 14, 14),
+        new THREE.MeshStandardMaterial({ color: 0xffdba4 })
+      );
+      idolHead.position.set(0, 4.15, -0.5);
+      processionFloatGroup.add(canopy, idolBody, idolHead);
+
+      scene.add(processionFloatGroup);
+
+      // Leaping Striped Pili Vesha (Tiger Dance) Performers & Chende Drummers
+      const tigerPositions = [
+        [-4.5, 39], [4.5, 39], [-3.2, 43], [3.2, 43], [0, 44.5]
+      ];
+      tigerPositions.forEach(([tx, tz], i) => {
+        const tGroup = new THREE.Group();
+        tGroup.position.set(tx, 0, tz);
+
+        const stripeMat = new THREE.MeshStandardMaterial({
+          color: i % 2 === 0 ? 0xf59e0b : 0xfacc15,
+          emissive: 0x451a03,
+          roughness: 0.4
+        });
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.28, 1.25, 12), stripeMat);
+        body.position.y = 1.1;
+        const blackBelt = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.34, 0.34, 0.3, 12),
+          new THREE.MeshBasicMaterial({ color: 0x111111 })
+        );
+        blackBelt.position.y = 1.1;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), stripeMat);
+        head.position.y = 1.95;
+
+        tGroup.add(body, blackBelt, head);
+        scene.add(tGroup);
+        piliDancers.push({ group: tGroup, baseX: tx, baseZ: tz, phase: i * 1.3 });
+      });
+    }
+    createGrandProcessionAvenue();
+
+    /*************************************************************************
+     * 8. INSTANCED LED FESTIVAL BULBS, DEVOTEE CROWDS, PETALS & FIREWORKS
+     *************************************************************************/
+    let petalsMesh, fireworksMesh;
+    const petalCount = 320;
+    const fireworkCount = 260;
+    const dummy = new THREE.Object3D();
+
+    function createInstancedLightsAndCrowds() {
+      // 2,400 Instanced Glowing LED Bulbs across Gopurams, Walls, Pond & Procession Street
+      const bulbCount = 2400;
+      const bulbGeo = new THREE.SphereGeometry(0.11, 6, 6);
+      const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const instancedBulbs = new THREE.InstancedMesh(bulbGeo, bulbMat, bulbCount);
+
+      const palette = [
+        new THREE.Color(0xffe169),
+        new THREE.Color(0xff7b00),
+        new THREE.Color(0x38bdf8),
+        new THREE.Color(0xf43f5e),
+        new THREE.Color(0x4ade80)
+      ];
+
+      let idx = 0;
+      // 1) Sweeping diagonal light strings from Main Gopuram
+      for (let s = 0; s < 14; s++) {
+        const angle = (s / 14) * Math.PI * 2;
+        for (let b = 0; b < 45; b++) {
+          if (idx >= bulbCount) break;
+          const t = b / 44;
+          const x = Math.cos(angle) * (t * 28);
+          const z = 16 + Math.sin(angle) * (t * 28);
+          const y = (1 - t) * 18 + Math.sin(t * Math.PI) * 2.2 + 2.5;
+          dummy.position.set(x, y, z);
+          dummy.updateMatrix();
+          instancedBulbs.setMatrixAt(idx, dummy.matrix);
+          instancedBulbs.setColorAt(idx, palette[s % palette.length]);
+          idx++;
+        }
+      }
+
+      // 2) Diamond-pattern light walls & procession street arches
+      while (idx < bulbCount) {
+        const ring = idx % 3;
+        if (ring === 0) {
+          // Procession avenue arches along Z = 24..55
+          const archIdx = idx % 8;
+          const archZ = 24 + archIdx * 4.2;
+          const theta = ((idx * 17) % 100) / 100 * Math.PI;
+          dummy.position.set(Math.cos(theta) * 9.5, Math.sin(theta) * 8.5 + 0.5, archZ);
+        } else if (ring === 1) {
+          // Perimeter diamond wall lights
+          const wallX = ((idx % 60) - 30) * 1.2;
+          const wallY = ((idx % 8) + 1) * 1.1;
+          dummy.position.set(wallX, wallY, 16);
+        } else {
+          // Pond & Darbar fairy lights
+          const a = (idx * 0.15);
+          dummy.position.set(Math.cos(a) * 24, 3.5 + (idx % 6), Math.sin(a) * 24 - 6);
+        }
+        dummy.updateMatrix();
+        instancedBulbs.setMatrixAt(idx, dummy.matrix);
+        instancedBulbs.setColorAt(idx, palette[idx % palette.length]);
+        idx++;
+      }
+
+      instancedBulbs.instanceMatrix.needsUpdate = true;
+      if (instancedBulbs.instanceColor) instancedBulbs.instanceColor.needsUpdate = true;
+      scene.add(instancedBulbs);
+
+      // Instanced Festive Devotee Crowd (180 figures)
+      const crowdCount = 180;
+      const crowdGeo = new THREE.CapsuleGeometry(0.26, 0.85, 4, 8);
+      const crowdMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
+      const crowdInst = new THREE.InstancedMesh(crowdGeo, crowdMat, crowdCount);
+      const sareeColors = [
+        new THREE.Color(0xf59e0b),
+        new THREE.Color(0xef4444),
+        new THREE.Color(0x10b981),
+        new THREE.Color(0x3b82f6),
+        new THREE.Color(0xfef3c7),
+        new THREE.Color(0xd946ef)
+      ];
+
+      for (let c = 0; c < crowdCount; c++) {
+        const side = c % 2 === 0 ? 1 : -1;
+        const cx = side * (5.5 + (c % 11) * 1.4);
+        const cz = -12 + (c % 30) * 2.2;
+        dummy.position.set(cx, 0.75, cz);
+        dummy.updateMatrix();
+        crowdInst.setMatrixAt(c, dummy.matrix);
+        crowdInst.setColorAt(c, sareeColors[c % sareeColors.length]);
+      }
+      crowdInst.instanceMatrix.needsUpdate = true;
+      if (crowdInst.instanceColor) crowdInst.instanceColor.needsUpdate = true;
+      scene.add(crowdInst);
+
+      // Falling Flower Petals (InstancedMesh)
+      const pGeo = new THREE.PlaneGeometry(0.18, 0.18);
+      const pMat = new THREE.MeshBasicMaterial({ color: 0xfb7185, side: THREE.DoubleSide });
+      petalsMesh = new THREE.InstancedMesh(pGeo, pMat, petalCount);
+      for (let i = 0; i < petalCount; i++) {
+        dummy.position.set((Math.random() - 0.5) * 60, Math.random() * 25, (Math.random() - 0.5) * 60);
+        dummy.updateMatrix();
+        petalsMesh.setMatrixAt(i, dummy.matrix);
+        petalsMesh.setColorAt(i, i % 2 === 0 ? new THREE.Color(0xfacc15) : new THREE.Color(0xf43f5e));
+      }
+      scene.add(petalsMesh);
+
+      // Aerial Fireworks Particles (InstancedMesh)
+      const fwGeo = new THREE.SphereGeometry(0.16, 6, 6);
+      const fwMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      fireworksMesh = new THREE.InstancedMesh(fwGeo, fwMat, fireworkCount);
+      for (let i = 0; i < fireworkCount; i++) {
+        fireworksMesh.setColorAt(i, palette[i % palette.length]);
+      }
+      scene.add(fireworksMesh);
+    }
+    createInstancedLightsAndCrowds();
+
+    /*************************************************************************
+     * 9. ARTICULATED 3D LOCAL GUIDE CHARACTER ("KIRAN · ಮಂಗಳೂರು ಮಾರ್ಗದರ್ಶಿ")
+     *************************************************************************/
+    class ArticulatedGuideKiran {
+      constructor() {
+        this.group = new THREE.Group();
+        this.group.position.set(0, 0, 24);
+        this.targetPos = new THREE.Vector3(0, 0, 24);
+        this.gesture = 'namaskara';
+        this.isWalking = false;
+
+        this.buildCharacter();
+        scene.add(this.group);
+      }
+
+      buildCharacter() {
+        const skinMat = new THREE.MeshStandardMaterial({ color: 0xd99b66, roughness: 0.45 });
+        const creamMunduMat = new THREE.MeshStandardMaterial({ color: 0xfdf8e7, roughness: 0.4 });
+        const whiteShirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35 });
+        const zariGoldMat = new THREE.MeshStandardMaterial({
+          color: 0xf6c453,
+          metalness: 0.8,
+          roughness: 0.2,
+          emissive: 0x422006
+        });
+
+        // Articulated Legs
+        this.leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.11, 0.9, 10), skinMat);
+        this.leftLeg.position.set(-0.18, 0.45, 0);
+        this.rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.11, 0.9, 10), skinMat);
+        this.rightLeg.position.set(0.18, 0.45, 0);
+        this.group.add(this.leftLeg, this.rightLeg);
+
+        // Cream Mundu / Veshti with Gold Zari Border
+        const mundu = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.95, 16), creamMunduMat);
+        mundu.position.y = 0.72;
+        const zariBorder = new THREE.Mesh(new THREE.CylinderGeometry(0.385, 0.39, 0.14, 16), zariGoldMat);
+        zariBorder.position.y = 0.32;
+        this.group.add(mundu, zariBorder);
+
+        // Upper Torso Pivot (for bowing)
+        this.upperBody = new THREE.Group();
+        this.upperBody.position.y = 1.15;
+
+        // White Half-Sleeve Shirt
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.32, 0.85, 16), whiteShirtMat);
+        torso.position.y = 0.42;
+        this.upperBody.add(torso);
+
+        // Gold-bordered Angavastram Shawl draped diagonally
+        const shawl = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.92, 0.72), creamMunduMat);
+        shawl.position.set(-0.14, 0.44, 0);
+        shawl.rotation.z = 0.18;
+        const shawlZari = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.94, 0.74), zariGoldMat);
+        shawlZari.position.set(-0.14, 0.44, 0);
+        shawlZari.rotation.z = 0.18;
+        shawlZari.scale.set(1.02, 1.0, 0.2);
+        this.upperBody.add(shawl, shawlZari);
+
+        // Blue Lanyard Strap + Official ID Badge on chest
+        const lanyard = new THREE.Mesh(
+          new THREE.TorusGeometry(0.22, 0.02, 8, 16),
+          new THREE.MeshBasicMaterial({ color: 0x2563eb })
+        );
+        lanyard.rotation.x = Math.PI / 2.3;
+        lanyard.position.set(0, 0.68, 0.22);
+        const idCard = new THREE.Mesh(
+          new THREE.BoxGeometry(0.16, 0.22, 0.03),
+          new THREE.MeshBasicMaterial({ color: 0xf8fafc })
+        );
+        idCard.position.set(0, 0.48, 0.34);
+        this.upperBody.add(lanyard, idCard);
+
+        // Articulated Left & Right Arms
+        this.leftArm = new THREE.Group();
+        this.leftArm.position.set(-0.44, 0.76, 0);
+        const lArmMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.72, 10), skinMat);
+        lArmMesh.position.y = -0.32;
+        this.leftArm.add(lArmMesh);
+
+        this.rightArm = new THREE.Group();
+        this.rightArm.position.set(0.44, 0.76, 0);
+        const rArmMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.72, 10), skinMat);
+        rArmMesh.position.y = -0.32;
+        this.rightArm.add(rArmMesh);
+        this.upperBody.add(this.leftArm, this.rightArm);
+
+        // Head, Hair, Sandal-Paste Tilak & Lip-Sync Mouth
+        this.headGroup = new THREE.Group();
+        this.headGroup.position.set(0, 1.08, 0);
+        const headSphere = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), skinMat);
+        const hairCap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.29, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.55),
+          new THREE.MeshStandardMaterial({ color: 0x18181b })
+        );
+        hairCap.rotation.x = -0.25;
+
+        // Sandal-paste Tilak on forehead
+        const tilak = new THREE.Mesh(
+          new THREE.BoxGeometry(0.12, 0.06, 0.03),
+          new THREE.MeshBasicMaterial({ color: 0xfde047 })
+        );
+        tilak.position.set(0, 0.1, 0.27);
+        const kumkumDot = new THREE.Mesh(
+          new THREE.SphereGeometry(0.025, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0xdc2626 })
+        );
+        kumkumDot.position.set(0, 0.1, 0.285);
+
+        // Articulated Mouth for real-time lip-sync
+        this.mouthMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.03, 0.03),
+          new THREE.MeshBasicMaterial({ color: 0x450a0a })
+        );
+        this.mouthMesh.position.set(0, -0.09, 0.265);
+
+        this.headGroup.add(headSphere, hairCap, tilak, kumkumDot, this.mouthMesh);
+        this.upperBody.add(this.headGroup);
+        this.group.add(this.upperBody);
+      }
+
+      walkTo(x, z, gesture = 'namaskara') {
+        this.targetPos.set(x, 0, z);
+        this.gesture = gesture;
+      }
+
+      update(elapsedTime, delta, isSpeaking) {
+        const dist = this.group.position.distanceTo(this.targetPos);
+        if (dist > 0.25) {
+          this.isWalking = true;
+          const dir = this.targetPos.clone().sub(this.group.position).normalize();
+          const step = Math.min(dist, delta * 9.5);
+          this.group.position.addScaledVector(dir, step);
+          const targetAngle = Math.atan2(dir.x, dir.z);
+          this.group.rotation.y = targetAngle;
+
+          // Walking leg & arm swing cycles
+          const swing = Math.sin(elapsedTime * 11) * 0.55;
+          this.leftLeg.rotation.x = swing;
+          this.rightLeg.rotation.x = -swing;
+          this.leftArm.rotation.x = -swing * 0.8;
+          this.rightArm.rotation.x = swing * 0.8;
+          this.leftArm.rotation.z = 0;
+          this.rightArm.rotation.z = 0;
+          this.upperBody.rotation.x = 0.05;
+        } else {
+          this.isWalking = false;
+          this.leftLeg.rotation.x = 0;
+          this.rightLeg.rotation.x = 0;
+
+          // Face toward camera gently when idle at stop
+          const toCam = new THREE.Vector3(camera.position.x - this.group.position.x, 0, camera.position.z - this.group.position.z);
+          if (toCam.lengthSq() > 0.1) {
+            const lookAngle = Math.atan2(toCam.x, toCam.z);
+            this.group.rotation.y = THREE.MathUtils.lerp(this.group.rotation.y, lookAngle, 0.08);
+          }
+
+          // Contextual Gestures at Stops
+          if (this.gesture === 'namaskara') {
+            this.upperBody.rotation.x = THREE.MathUtils.lerp(this.upperBody.rotation.x, 0.06, 0.1);
+            this.leftArm.rotation.x = -0.85;
+            this.rightArm.rotation.x = -0.85;
+            this.leftArm.rotation.z = -0.35;
+            this.rightArm.rotation.z = 0.35;
+          } else if (this.gesture === 'bow') {
+            this.upperBody.rotation.x = THREE.MathUtils.lerp(this.upperBody.rotation.x, 0.35 + Math.sin(elapsedTime * 2) * 0.08, 0.1);
+            this.leftArm.rotation.x = -0.95;
+            this.rightArm.rotation.x = -0.95;
+            this.leftArm.rotation.z = -0.38;
+            this.rightArm.rotation.z = 0.38;
+          } else if (this.gesture === 'point') {
+            this.upperBody.rotation.x = 0;
+            this.rightArm.rotation.x = -1.25;
+            this.rightArm.rotation.z = -0.2 + Math.sin(elapsedTime * 3) * 0.08;
+            this.leftArm.rotation.x = -0.2;
+            this.leftArm.rotation.z = 0;
+          } else if (this.gesture === 'wave') {
+            this.upperBody.rotation.x = 0;
+            this.rightArm.rotation.x = -2.4;
+            this.rightArm.rotation.z = Math.sin(elapsedTime * 7) * 0.35;
+            this.leftArm.rotation.x = -0.2;
+            this.leftArm.rotation.z = 0;
+          }
+        }
+
+        // Real-time lip-sync mouth movement & gentle head nodding while speaking
+        if (isSpeaking) {
+          const openScale = 1 + Math.abs(Math.sin(elapsedTime * 18)) * 3.2;
+          this.mouthMesh.scale.y = openScale;
+          this.headGroup.rotation.x = Math.sin(elapsedTime * 5.5) * 0.09;
+          this.headGroup.rotation.y = Math.cos(elapsedTime * 3.2) * 0.08;
+        } else {
+          this.mouthMesh.scale.y = 1;
+          this.headGroup.rotation.x = 0;
+          this.headGroup.rotation.y = 0;
+        }
+      }
+    }
+
+    const kiran = new ArticulatedGuideKiran();
+
+    /*************************************************************************
+     * 10. CAMERA TRANSITION ENGINE (CUBIC-EASED FLY-TOS OR INSTant CUTS)
+     *************************************************************************/
+    const camAnim = {
+      active: false,
+      startTime: 0,
+      duration: 2.1,
+      fromPos: new THREE.Vector3(),
+      toPos: new THREE.Vector3(),
+      fromTarget: new THREE.Vector3(),
+      toTarget: new THREE.Vector3()
+    };
+
+    function flyCameraTo(posArr, targetArr) {
+      if (state.reducedMotion) {
+        camera.position.set(...posArr);
+        controls.target.set(...targetArr);
+        controls.update();
+        camAnim.active = false;
+        return;
+      }
+      camAnim.fromPos.copy(camera.position);
+      camAnim.toPos.set(...posArr);
+      camAnim.fromTarget.copy(controls.target);
+      camAnim.toTarget.set(...targetArr);
+      camAnim.startTime = performance.now() / 1000;
+      camAnim.active = true;
+    }
+
+    /*************************************************************************
+     * 11. BILINGUAL WEB SPEECH API ENGINE (kn-IN & en-IN WITH SUBTITLE SYNC)
+     *************************************************************************/
+    let speechTimerFallback = null;
+    const subtitleEl = document.getElementById('subtitle-text');
+    const ttsNoticeEl = document.getElementById('tts-notice');
+    const voiceWaveEl = document.getElementById('voice-wave');
+
+    function stopCurrentNarration() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (speechTimerFallback) {
+        clearTimeout(speechTimerFallback);
+        speechTimerFallback = null;
+      }
+      state.isSpeaking = false;
+      voiceWaveEl.classList.remove('speaking');
+      audioEngine.setDucking(false);
+    }
+
+    function getMatchingVoice(langCode) {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (langCode === 'kn') {
+        return voices.find((v) => v.lang.toLowerCase().includes('kn')) || null;
+      }
+      return (
+        voices.find((v) => v.lang.toLowerCase() === 'en-in') ||
+        voices.find((v) => v.lang.toLowerCase().startsWith('en')) ||
+        null
+      );
+    }
+
+    function speakCurrentStopSentence() {
+      stopCurrentNarration();
+      const stop = TOUR_STOPS[state.currentStopIndex];
+      const sentences = state.lang === 'kn' ? stop.sentencesKn : stop.sentencesEn;
+      if (state.sentenceIndex >= sentences.length) {
+        state.isSpeaking = false;
+        voiceWaveEl.classList.remove('speaking');
+        audioEngine.setDucking(false);
+        return;
+      }
+
+      const text = sentences[state.sentenceIndex];
+      subtitleEl.textContent = text;
+
+      if (!state.isPlaying) return;
+
+      state.isSpeaking = true;
+      voiceWaveEl.classList.add('speaking');
+      audioEngine.setDucking(true);
+
+      const voice = getMatchingVoice(state.lang);
+      if (state.lang === 'kn' && !voice) {
+        ttsNoticeEl.style.display = 'block';
+      } else {
+        ttsNoticeEl.style.display = 'none';
+      }
+
+      if ('speechSynthesis' in window && (state.lang === 'en' || voice)) {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = state.lang === 'kn' ? 'kn-IN' : 'en-IN';
+        if (voice) utter.voice = voice;
+        utter.volume = audioEngine.voiceVol;
+        utter.rate = 0.96;
+
+        utter.onend = () => {
+          if (!state.isPlaying) return;
+          state.sentenceIndex++;
+          if (state.sentenceIndex < sentences.length) {
+            speechTimerFallback = setTimeout(() => speakCurrentStopSentence(), 380);
+          } else {
+            state.isSpeaking = false;
+            voiceWaveEl.classList.remove('speaking');
+            audioEngine.setDucking(false);
+          }
+        };
+
+        utter.onerror = () => {
+          runTimedSubtitleAdvance(sentences);
+        };
+
+        window.speechSynthesis.speak(utter);
+      } else {
+        // Smooth subtitle timer fallback when Kannada TTS voice is unavailable on device
+        runTimedSubtitleAdvance(sentences);
+      }
+    }
+
+    function runTimedSubtitleAdvance(sentences) {
+      const text = sentences[state.sentenceIndex] || '';
+      const durationMs = Math.max(3400, text.length * 62);
+      speechTimerFallback = setTimeout(() => {
+        if (!state.isPlaying) return;
+        state.sentenceIndex++;
+        if (state.sentenceIndex < sentences.length) {
+          speakCurrentStopSentence();
+        } else {
+          state.isSpeaking = false;
+          voiceWaveEl.classList.remove('speaking');
+          audioEngine.setDucking(false);
+        }
+      }, durationMs);
+    }
+
+    /*************************************************************************
+     * 12. UI RENDERING, LOCALIZATION & STOP NAVIGATION
+     *************************************************************************/
+    const stopPillsContainer = document.getElementById('stop-pills-container');
+    const hotspotsLayer = document.getElementById('hotspots-layer');
+    const hotspotDomElements = [];
+
+    function buildHotspotPins() {
+      hotspotsLayer.innerHTML = '';
+      hotspotDomElements.length = 0;
+      HOTSPOTS_3D.forEach((hs) => {
+        const btn = document.createElement('div');
+        btn.className = 'hotspot-pin';
+        btn.innerHTML = `<span class="hotspot-dot"></span><span class="hs-text">${state.lang === 'kn' ? hs.labelKn : hs.labelEn}</span>`;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openInspectorDrawer(
+            state.lang === 'kn' ? '3D ಹಾಟ್ಸ್ಪಾಟ್ ಮಾಹಿತಿ' : '3D HOTSPOT INFO',
+            state.lang === 'kn' ? hs.labelKn : hs.labelEn,
+            state.lang === 'kn' ? hs.bodyKn : hs.bodyEn,
+            state.lang === 'kn' ? hs.metaKn : hs.metaEn
+          );
+          flyCameraTo([hs.pos[0] + 6, hs.pos[1] + 3, hs.pos[2] + 12], hs.pos);
+        });
+        hotspotsLayer.appendChild(btn);
+        hotspotDomElements.push({ hs, el: btn, vec: new THREE.Vector3(...hs.pos) });
+      });
+    }
+
+    function openInspectorDrawer(tag, title, body, meta) {
+      const drawer = document.getElementById('inspector-drawer');
+      document.getElementById('drawer-tag').textContent = tag;
+      document.getElementById('drawer-title').textContent = title;
+      document.getElementById('drawer-body').textContent = body;
+      document.getElementById('drawer-meta').textContent = meta;
+      drawer.classList.add('open');
+
+      const fill = document.getElementById('drawer-timer-fill');
+      fill.style.transition = 'none';
+      fill.style.transform = 'scaleX(1)';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          fill.style.transition = 'transform 8.5s linear';
+          fill.style.transform = 'scaleX(0)';
+        });
+      });
+
+      if (state.drawerTimeout) clearTimeout(state.drawerTimeout);
+      state.drawerTimeout = setTimeout(() => {
+        drawer.classList.remove('open');
+      }, 8500);
+    }
+
+    document.getElementById('btn-close-drawer').addEventListener('click', () => {
+      document.getElementById('inspector-drawer').classList.remove('open');
+      if (state.drawerTimeout) clearTimeout(state.drawerTimeout);
+    });
+
+    function buildContextualBars() {
+      // Stop 3 Timeline chips
+      const tlRow = document.getElementById('timeline-chips-row');
+      tlRow.innerHTML = '';
+      TIMELINE_EVENTS.forEach((ev, idx) => {
+        const b = document.createElement('button');
+        b.className = 'deity-chip';
+        b.textContent = ev.year;
+        b.addEventListener('click', () => {
+          openInspectorDrawer(
+            state.lang === 'kn' ? 'ಚಾರಿತ್ರಿಕ ಮೈಲಿಗಲ್ಲು' : 'HISTORICAL MILESTONE',
+            state.lang === 'kn' ? ev.titleKn : ev.titleEn,
+            state.lang === 'kn' ? ev.descKn : ev.descEn,
+            `Sri Gokarnanatha Kshetra · ${ev.year}`
+          );
+          const pz = -5 + idx * 3.6;
+          kiran.walkTo(-10, pz, 'point');
+          flyCameraTo([-6, 4.5, pz + 4], [-12, 2, pz]);
+        });
+        tlRow.appendChild(b);
+      });
+
+      // Stop 4 Alankara Day 1–9 Swatches
+      const alankaraRow = document.getElementById('alankara-buttons-row');
+      alankaraRow.innerHTML = '';
+      ALANKARA_2026.forEach((item) => {
+        const b = document.createElement('button');
+        b.className = 'swatch-btn' + (item.day === state.selectedAlankaraDay ? ' active' : '');
+        b.dataset.day = item.day;
+        const hexStr = '#' + item.hex.toString(16).padStart(6, '0');
+        b.innerHTML = `<span class="color-dot" style="background:${hexStr}"></span><span>Day ${item.day}: ${state.lang === 'kn' ? item.colorKn : item.colorEn}</span>`;
+        b.addEventListener('click', () => {
+          applySharadaAlankara(item.day);
+          openInspectorDrawer(
+            state.lang === 'kn' ? `ದಿನ ${item.day} · ಸೀರೆ ಅಲಂಕಾರ` : `DAY ${item.day} · SAREE ALANKARA`,
+            state.lang === 'kn' ? item.colorKn : item.colorEn,
+            state.lang === 'kn'
+              ? `${item.dateKn}: ಶಾರದಾ ಮಾತೆಗೆ ${item.colorKn} ಬಣ್ಣದ ರೇಷ್ಮೆ ಸೀರೆ, ಒಪ್ಪುವ ರವಿಕೆ ಮತ್ತು ಹೂವಿನ ಮಾಲೆಯ ಅಲಂಕಾರ.`
+              : `${item.dateEn}: Sharada Mathe is adorned in a ${item.colorEn} silk saree with matching blouse and fresh flower garlands.`,
+            state.lang === 'kn' ? 'ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.' : 'Please verify final timings with the temple.'
+          );
+        });
+        alankaraRow.appendChild(b);
+      });
+
+      // Stop 5 Navadurga & Mahaganapati quick-jump chips
+      const ndRow = document.getElementById('navadurga-buttons-row');
+      ndRow.innerHTML = '';
+      NAVADURGA_LIST.forEach((deity) => {
+        const b = document.createElement('button');
+        b.className = 'deity-chip' + (deity.id === state.selectedDeityId ? ' active' : '');
+        b.textContent = state.lang === 'kn' ? deity.nameKn : deity.nameEn;
+        b.addEventListener('click', () => inspectDeity(deity));
+        ndRow.appendChild(b);
+      });
+    }
+
+    function inspectDeity(deity) {
+      state.selectedDeityId = deity.id;
+      buildContextualBars();
+      const pos = deityPositionMap[deity.id];
+      if (pos) {
+        flyCameraTo([pos.x * 0.55, 4.8, pos.z + 6.5], [pos.x, 3.2, pos.z]);
+        kiran.walkTo(pos.x * 0.72, pos.z + 2.6, 'bow');
+      }
+      openInspectorDrawer(
+        state.lang === 'kn' ? 'ನವದುರ್ಗಾ ದರ್ಶನ (1991 ಪರಂಪರೆ)' : 'DEITY INSPECTOR (SINCE 1991)',
+        state.lang === 'kn' ? deity.nameKn : deity.nameEn,
+        state.lang === 'kn' ? deity.storyKn : deity.storyEn,
+        state.lang === 'kn'
+          ? `ವಾಹನ: ${deity.vahanaKn} | ಲಾಂಛನ: ${deity.symbolsKn}`
+          : `Vahana: ${deity.vahanaEn} | Symbols: ${deity.symbolsEn}`
+      );
+    }
+
+    function goToStop(index) {
+      state.currentStopIndex = (index + TOUR_STOPS.length) % TOUR_STOPS.length;
+      state.sentenceIndex = 0;
+      const stop = TOUR_STOPS[state.currentStopIndex];
+
+      // Update Stop Pills UI
+      document.querySelectorAll('.stop-pill').forEach((pill, i) => {
+        pill.classList.toggle('active', i === state.currentStopIndex);
+      });
+
+      document.getElementById('stop-counter-label').textContent =
+        state.lang === 'kn' ? `ತಾಣ ${stop.id} / 10` : `Stop ${stop.id} / 10`;
+
+      // Show contextual sub-bar for Stop 3, 4, 5, 9
+      document.getElementById('panel-timeline').classList.toggle('visible', stop.id === 3);
+      document.getElementById('panel-alankara').classList.toggle('visible', stop.id === 4 || stop.id === 7);
+      document.getElementById('panel-navadurga').classList.toggle('visible', stop.id === 5);
+      document.getElementById('panel-procession').classList.toggle('visible', stop.id === 9);
+
+      // Update Soundscape (Stops 1–7 calm, Stop 8 warm-up, Stop 9 energetic chende+conch, Stop 10 finale)
+      audioEngine.setStopSoundscape(stop.id);
+
+      // Move Kiran & Camera
+      kiran.walkTo(stop.kiranPos[0], stop.kiranPos[2], stop.gesture);
+      if (state.tourMode === 'guided' && !state.followKiran) {
+        flyCameraTo(stop.camPos, stop.camTarget);
+      }
+
+      speakCurrentStopSentence();
+    }
+
+    function renderAllLocalizedUI() {
+      const isKn = state.lang === 'kn';
+      document.documentElement.lang = isKn ? 'kn' : 'en';
+
+      // Stop pills
+      stopPillsContainer.innerHTML = '';
+      TOUR_STOPS.forEach((st, i) => {
+        const pill = document.createElement('button');
+        pill.className = 'stop-pill' + (i === state.currentStopIndex ? ' active' : '');
+        pill.textContent = isKn ? st.pillKn : st.pillEn;
+        pill.addEventListener('click', () => {
+          state.isPlaying = true;
+          updatePlayPauseButton();
+          goToStop(i);
+        });
+        stopPillsContainer.appendChild(pill);
+      });
+
+      // Top HUD buttons
+      document.getElementById('btn-mode-toggle').textContent =
+        state.tourMode === 'guided'
+          ? (isKn ? '🧭 ಮಾರ್ಗದರ್ಶಿ ಪ್ರವಾಸ (Guided)' : '🧭 Guided Tour Mode')
+          : (isKn ? '🕊️ ಸ್ವತಂತ್ರ ವೀಕ್ಷಣೆ (Free Explore)' : '🕊️ Free Explore Mode');
+
+      document.getElementById('btn-follow-kiran').textContent =
+        isKn ? '🎥 ಕಿರಣ್ ಹಿಂಬಾಲಿಸಿ' : '🎥 Follow Guide';
+
+      document.getElementById('btn-open-tips').textContent = isKn ? '💡 ಮಾಹಿತಿ (6)' : '💡 Tips (6)';
+      document.getElementById('btn-open-quiz').textContent = isKn ? '🏆 ರಸಪ್ರಶ್ನೆ (8)' : '🏆 Quiz (8)';
+      document.getElementById('btn-open-transcript').textContent = isKn ? '📜 ನಿರೂಪಣೆ' : '📜 Transcript';
+      document.getElementById('btn-open-settings').textContent = isKn ? '🔊 ಆಡಿಯೋ & GFX' : '🔊 Audio & GFX';
+
+      document.getElementById('guide-speaker-label').textContent =
+        isKn ? 'ಕಿರಣ್ · ಮಂಗಳೂರು ಮಾರ್ಗದರ್ಶಿ (Kiran)' : 'Kiran · Mangaluru Local Guide';
+
+      document.getElementById('footer-verify-note').textContent =
+        isKn
+          ? 'ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ · Please verify final timings with the temple.'
+          : 'Please verify final timings with the temple · ದಯವಿಟ್ಟು ಅಂತಿಮ ಸಮಯವನ್ನು ದೇವಸ್ಥಾನದೊಂದಿಗೆ ದೃಢೀಕರಿಸಿ.';
+
+      updatePlayPauseButton();
+      buildHotspotPins();
+      buildContextualBars();
+      renderVisitorTipsModal();
+      renderQuizModal();
+      renderTranscriptModal();
+    }
+
+    function updatePlayPauseButton() {
+      const btn = document.getElementById('btn-play-pause');
+      if (state.isPlaying) {
+        btn.textContent = state.lang === 'kn' ? '⏸️ ವಿರಾಮ (Pause)' : '⏸️ Pause';
+      } else {
+        btn.textContent = state.lang === 'kn' ? '▶️ ಪ್ಲೇ (Play)' : '▶️ Play';
+      }
+    }
+
+    function switchLanguage(newLang) {
+      state.lang = newLang;
+      document.getElementById('welcome-lang-kn').classList.toggle('active', newLang === 'kn');
+      document.getElementById('welcome-lang-en').classList.toggle('active', newLang === 'en');
+      state.sentenceIndex = 0;
+      renderAllLocalizedUI();
+      speakCurrentStopSentence();
+    }
+
+    /*************************************************************************
+     * 13. MODALS: VISITOR TIPS, 8-QUESTION QUIZ & FULL BILINGUAL TRANSCRIPT
+     *************************************************************************/
+    function renderVisitorTipsModal() {
+      const grid = document.getElementById('tips-grid-container');
+      grid.innerHTML = '';
+      VISITOR_TIPS.forEach((tip) => {
+        const card = document.createElement('div');
+        card.className = 'tip-card';
+        card.innerHTML = `
+          <h4>${state.lang === 'kn' ? tip.titleKn : tip.titleEn}</h4>
+          <p style="font-size:13px;color:var(--text-main);margin-bottom:6px;">${state.lang === 'kn' ? tip.bodyKn : tip.bodyEn}</p>
+          <p style="font-size:11.5px;color:var(--text-muted);">${state.lang === 'kn' ? tip.bodyEn : tip.bodyKn}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderQuizModal() {
+      const containerEl = document.getElementById('quiz-questions-container');
+      const bannerEl = document.getElementById('quiz-score-banner');
+      containerEl.innerHTML = '';
+
+      let correctCount = 0;
+      const answeredCount = Object.keys(state.quizAnswers).length;
+      QUIZ_QUESTIONS.forEach((q, idx) => {
+        if (state.quizAnswers[idx] === q.ans) correctCount++;
+      });
+
+      bannerEl.textContent =
+        state.lang === 'kn'
+          ? `ನಿಮ್ಮ ಅಂಕಗಳು: ${correctCount} / ${QUIZ_QUESTIONS.length} (${answeredCount} ಉತ್ತರಿಸಲಾಗಿದೆ) ${correctCount === 8 ? '🎉 ಅತ್ಯುತ್ತಮ! ಕುಡ್ಲ ದಸರಾ ಪರಿಣತರು!' : ''}`
+          : `Your Score: ${correctCount} / ${QUIZ_QUESTIONS.length} (${answeredCount} answered) ${correctCount === 8 ? '🎉 Grand Champion of Mangaluru Dasara!' : ''}`;
+
+      QUIZ_QUESTIONS.forEach((q, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        const qTitle = document.createElement('div');
+        qTitle.className = 'quiz-q';
+        qTitle.textContent = state.lang === 'kn' ? q.qKn : q.qEn;
+        card.appendChild(qTitle);
+
+        const optsDiv = document.createElement('div');
+        optsDiv.className = 'quiz-options';
+        const opts = state.lang === 'kn' ? q.optsKn : q.optsEn;
+
+        opts.forEach((optText, oIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-opt';
+          if (state.quizAnswers[qIdx] !== undefined) {
+            if (oIdx === q.ans) btn.classList.add('correct');
+            else if (state.quizAnswers[qIdx] === oIdx) btn.classList.add('wrong');
+          }
+          btn.textContent = optText;
+          btn.addEventListener('click', () => {
+            state.quizAnswers[qIdx] = oIdx;
+            if (oIdx === q.ans && audioEngine.isStarted) {
+              audioEngine.playTempleBell();
+            }
+            renderQuizModal();
+          });
+          optsDiv.appendChild(btn);
+        });
+
+        card.appendChild(optsDiv);
+        containerEl.appendChild(card);
+      });
+    }
+
+    function renderTranscriptModal() {
+      const containerEl = document.getElementById('transcript-body-container');
+      containerEl.innerHTML = '';
+      TOUR_STOPS.forEach((st) => {
+        const block = document.createElement('div');
+        block.style.marginBottom = '18px';
+        block.style.paddingBottom = '14px';
+        block.style.borderBottom = '1px solid rgba(246,196,83,0.22)';
+        block.innerHTML = `
+          <h3 style="color:var(--gold-bright);margin-bottom:6px;">${st.pillKn} · ${st.pillEn}</h3>
+          <p style="color:#fff;margin-bottom:6px;"><strong>ಕನ್ನಡ:</strong> ${st.sentencesKn.join(' ')}</p>
+          <p style="color:var(--text-muted);"><strong>English:</strong> ${st.sentencesEn.join(' ')}</p>
+        `;
+        containerEl.appendChild(block);
+      });
+    }
+
+    /*************************************************************************
+     * 14. EVENT LISTENERS, RAYCASTER & KEYBOARD SHORTCUTS
+     *************************************************************************/
+    document.getElementById('welcome-lang-kn').addEventListener('click', () => switchLanguage('kn'));
+    document.getElementById('welcome-lang-en').addEventListener('click', () => switchLanguage('en'));
+
+    document.getElementById('btn-begin-tour').addEventListener('click', () => {
+      document.getElementById('welcome-overlay').classList.add('hidden');
+      audioEngine.init();
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      goToStop(0);
+    });
+
+    document.getElementById('btn-lang-toggle').addEventListener('click', () => {
+      switchLanguage(state.lang === 'kn' ? 'en' : 'kn');
+    });
+
+    document.getElementById('btn-mode-toggle').addEventListener('click', () => {
+      state.tourMode = state.tourMode === 'guided' ? 'free' : 'guided';
+      document.getElementById('btn-mode-toggle').classList.toggle('active', state.tourMode === 'guided');
+      renderAllLocalizedUI();
+      if (state.tourMode === 'guided') {
+        const stop = TOUR_STOPS[state.currentStopIndex];
+        flyCameraTo(stop.camPos, stop.camTarget);
+      }
+    });
+
+    document.getElementById('btn-follow-kiran').addEventListener('click', (e) => {
+      state.followKiran = !state.followKiran;
+      e.currentTarget.classList.toggle('active', state.followKiran);
+    });
+
+    document.getElementById('btn-prev-stop').addEventListener('click', () => {
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      goToStop(state.currentStopIndex - 1);
+    });
+
+    document.getElementById('btn-next-stop').addEventListener('click', () => {
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      goToStop(state.currentStopIndex + 1);
+    });
+
+    document.getElementById('btn-play-pause').addEventListener('click', () => {
+      state.isPlaying = !state.isPlaying;
+      updatePlayPauseButton();
+      if (state.isPlaying) {
+        speakCurrentStopSentence();
+      } else {
+        stopCurrentNarration();
+      }
+    });
+
+    document.getElementById('btn-replay-voice').addEventListener('click', () => {
+      state.isPlaying = true;
+      state.sentenceIndex = 0;
+      updatePlayPauseButton();
+      speakCurrentStopSentence();
+    });
+
+    document.getElementById('btn-toggle-float').addEventListener('click', (e) => {
+      state.floatMoving = !state.floatMoving;
+      e.currentTarget.textContent = state.floatMoving ? '⏸️ Pause Float' : '▶️ Resume Float';
+    });
+
+    // Modals Open/Close
+    document.getElementById('btn-open-tips').addEventListener('click', () => {
+      document.getElementById('modal-tips').classList.add('open');
+    });
+    document.getElementById('btn-open-quiz').addEventListener('click', () => {
+      document.getElementById('modal-quiz').classList.add('open');
+    });
+    document.getElementById('btn-open-transcript').addEventListener('click', () => {
+      document.getElementById('modal-transcript').classList.add('open');
+    });
+    document.getElementById('btn-open-settings').addEventListener('click', () => {
+      document.getElementById('modal-settings').classList.add('open');
+    });
+
+    document.querySelectorAll('[data-close]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById(btn.dataset.close).classList.remove('open');
+      });
+    });
+
+    document.getElementById('btn-reset-quiz').addEventListener('click', () => {
+      state.quizAnswers = {};
+      renderQuizModal();
+    });
+
+    // Audio Sliders & Custom Chende File Input
+    document.getElementById('vol-master').addEventListener('input', (e) => {
+      audioEngine.masterVol = parseFloat(e.target.value);
+      audioEngine.updateVolumes();
+    });
+    document.getElementById('vol-music').addEventListener('input', (e) => {
+      audioEngine.musicVol = parseFloat(e.target.value);
+      audioEngine.updateVolumes();
+    });
+    document.getElementById('vol-fx').addEventListener('input', (e) => {
+      audioEngine.fxVol = parseFloat(e.target.value);
+      audioEngine.updateVolumes();
+    });
+    document.getElementById('vol-voice').addEventListener('input', (e) => {
+      audioEngine.voiceVol = parseFloat(e.target.value);
+    });
+
+    document.getElementById('chende-file-input').addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('chende-file-status');
+      try {
+        await audioEngine.loadCustomChendeFile(file);
+        statusEl.textContent = `Loaded custom Chende audio: ${file.name}`;
+      } catch (err) {
+        statusEl.textContent = 'Could not decode file; using procedural Chende synth.';
+      }
+    });
+
+    // Low Graphics & Reduced Motion toggles
+    document.getElementById('btn-toggle-lowgfx').addEventListener('click', (e) => {
+      state.lowGfx = !state.lowGfx;
+      e.currentTarget.textContent = state.lowGfx ? 'ON' : 'OFF';
+      e.currentTarget.classList.toggle('active', state.lowGfx);
+      petalsMesh.visible = !state.lowGfx;
+      fireworksMesh.visible = !state.lowGfx;
+    });
+
+    document.getElementById('btn-toggle-reducedmotion').addEventListener('click', (e) => {
+      state.reducedMotion = !state.reducedMotion;
+      e.currentTarget.textContent = state.reducedMotion ? 'ON' : 'OFF';
+      e.currentTarget.classList.toggle('active', state.reducedMotion);
+    });
+
+    // Raycaster for 3D Idols & Historical Timeline Pillars
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    renderer.domElement.addEventListener('pointerdown', (event) => {
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(clickableMeshes, false);
+      if (intersects.length > 0) {
+        const data = intersects[0].object.userData;
+        if (data && data.type === 'deity') {
+          inspectDeity(data.deity);
+        } else if (data && data.type === 'timeline') {
+          const ev = data.event;
+          openInspectorDrawer(
+            state.lang === 'kn' ? 'ಚಾರಿತ್ರಿಕ ಸ್ತಂಭ' : 'TIMELINE PILLAR',
+            state.lang === 'kn' ? ev.titleKn : ev.titleEn,
+            state.lang === 'kn' ? ev.descKn : ev.descEn,
+            `Sri Gokarnanatha Kshetra · ${ev.year}`
+          );
+        }
+      }
+    });
+
+    // Keyboard Shortcuts (ArrowLeft / ArrowRight for stops, Space for Play/Pause)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        state.isPlaying = true;
+        updatePlayPauseButton();
+        goToStop(state.currentStopIndex + 1);
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        state.isPlaying = true;
+        updatePlayPauseButton();
+        goToStop(state.currentStopIndex - 1);
+      } else if (e.code === 'Space') {
+        e.preventDefault();
+        document.getElementById('btn-play-pause').click();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    /*************************************************************************
+     * 15. MAIN ANIMATION LOOP & 3D-TO-2D SCREEN PROJECTION
+     *************************************************************************/
+    const clock = new THREE.Clock();
+    const kiranBadgeEl = document.getElementById('kiran-badge');
+    const tempVec = new THREE.Vector3();
+
+    function projectToScreen(worldVec, domEl) {
+      tempVec.copy(worldVec);
+      tempVec.project(camera);
+      if (tempVec.z > 1) {
+        domEl.style.display = 'none';
+        return;
+      }
+      const x = (tempVec.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-(tempVec.y * 0.5) + 0.5) * window.innerHeight;
+      domEl.style.display = 'flex';
+      domEl.style.left = `${x}px`;
+      domEl.style.top = `${y}px`;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = Math.min(clock.getDelta(), 0.1);
+      const elapsed = clock.getElapsedTime();
+
+      // 1. Update Articulated Guide Kiran
+      kiran.update(elapsed, delta, state.isSpeaking);
+
+      // 2. Camera Fly-to or Follow Guide Mode
+      if (state.followKiran) {
+        const behindOffset = new THREE.Vector3(0, 3.8, 6.8);
+        const desiredCam = kiran.group.position.clone().add(behindOffset);
+        camera.position.lerp(desiredCam, 0.08);
+        controls.target.lerp(
+          new THREE.Vector3(kiran.group.position.x, kiran.group.position.y + 1.8, kiran.group.position.z - 4),
+          0.1
+        );
+      } else if (camAnim.active) {
+        const t = Math.min((performance.now() / 1000 - camAnim.startTime) / camAnim.duration, 1);
+        // Cubic ease-in-out
+        const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        camera.position.lerpVectors(camAnim.fromPos, camAnim.toPos, ease);
+        controls.target.lerpVectors(camAnim.fromTarget, camAnim.toTarget, ease);
+        if (t >= 1) camAnim.active = false;
+      }
+      controls.update();
+
+      // 3. Circling Aarti Flame at Stop 4 Sharada Darbar
+      if (aartiFlameMesh) {
+        aartiFlameMesh.position.x = Math.cos(elapsed * 2.4) * 0.95;
+        aartiFlameMesh.position.y = 4.2 + Math.sin(elapsed * 2.4) * 0.75;
+      }
+
+      // 4. Pushkarini Fountain Pulse
+      fountainsParticles.forEach((f, idx) => {
+        f.scale.y = 0.85 + Math.sin(elapsed * 5 + idx) * 0.22;
+      });
+
+      // 5. Stop 9 Moving Sharada Mathe Float & Leaping Pili Vesha Tiger Dancers
+      if (processionFloatGroup && state.floatMoving) {
+        processionFloatGroup.position.z = 34 + Math.sin(elapsed * 0.45) * 8.5;
+      }
+      piliDancers.forEach((d) => {
+        const jump = Math.max(0, Math.sin(elapsed * 5.5 + d.phase)) * 1.15;
+        d.group.position.y = jump;
+        d.group.rotation.y = Math.sin(elapsed * 2.5 + d.phase) * 0.6;
+      });
+
+      // 6. Falling Flower Petals & Aerial Fireworks (when not in Low Graphics Mode)
+      if (!state.lowGfx) {
+        for (let i = 0; i < petalCount; i++) {
+          const y = 24 - ((elapsed * 2.2 + i * 0.37) % 24);
+          const x = Math.sin(elapsed * 0.8 + i) * 28;
+          const z = Math.cos(elapsed * 0.6 + i * 1.3) * 28;
+          dummy.position.set(x, y, z);
+          dummy.rotation.set(elapsed + i, elapsed * 0.5, 0);
+          dummy.updateMatrix();
+          petalsMesh.setMatrixAt(i, dummy.matrix);
+        }
+        petalsMesh.instanceMatrix.needsUpdate = true;
+
+        const burstCycle = (elapsed * 0.75) % 1;
+        const burstRadius = burstCycle * 16;
+        for (let i = 0; i < fireworkCount; i++) {
+          const phi = Math.acos(1 - (2 * (i % 65)) / 65);
+          const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+          const centerIdx = Math.floor(i / 65);
+          const cx = (centerIdx - 1.5) * 18;
+          const cy = 26 + (centerIdx % 2) * 6;
+          const cz = -10 + (centerIdx % 3) * 18;
+          dummy.position.set(
+            cx + Math.sin(phi) * Math.cos(theta) * burstRadius,
+            cy + Math.cos(phi) * burstRadius - burstCycle * burstCycle * 4,
+            cz + Math.sin(phi) * Math.sin(theta) * burstRadius
+          );
+          const s = Math.max(0.01, 1 - burstCycle);
+          dummy.scale.set(s, s, s);
+          dummy.updateMatrix();
+          fireworksMesh.setMatrixAt(i, dummy.matrix);
+        }
+        fireworksMesh.instanceMatrix.needsUpdate = true;
+      }
+
+      // 7. Project 3D Guide Badge & Hotspot Pins
+      projectToScreen(
+        new THREE.Vector3(kiran.group.position.x, kiran.group.position.y + 2.65, kiran.group.position.z),
+        kiranBadgeEl
+      );
+      hotspotDomElements.forEach((item) => {
+        projectToScreen(item.vec, item.el);
+      });
+
+      // 8. Render Scene (with UnrealBloomPass or direct renderer in Low Graphics Mode)
+      if (state.lowGfx) {
+        renderer.render(scene, camera);
+      } else {
+        composer.render();
+      }
+    }
+
+    // Initialize UI & Start Render Loop
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {};
+    }
+    renderAllLocalizedUI();
+    subtitleEl.textContent = TOUR_STOPS[0].sentencesKn[0];
+    animate();
+  </script>
+</body>
+</html>
